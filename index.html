@@ -732,15 +732,23 @@ async function proxyFetch(url, isXML) {
   let lastErr;
   for (const makeUrl of CORS) {
     try {
-      const r = await fetch(makeUrl(url), {
-        headers: { Accept: isXML ? 'application/rss+xml,application/xml,text/xml,*/*' : 'application/json,*/*' },
-        signal: AbortSignal.timeout(14000)
-      });
+      // Use manual AbortController instead of AbortSignal.timeout() for browser compatibility
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 14000);
+      let r;
+      try {
+        r = await fetch(makeUrl(url), {
+          headers: { Accept: isXML ? 'application/rss+xml,application/xml,text/xml,*/*' : 'application/json,*/*' },
+          signal: controller.signal
+        });
+      } finally {
+        clearTimeout(timer);
+      }
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return isXML ? await r.text() : await r.json();
     } catch(e) { lastErr = e; }
   }
-  throw new Error('All proxies failed: ' + lastErr?.message);
+  throw new Error('All proxies failed: ' + (lastErr && lastErr.message ? lastErr.message : String(lastErr)));
 }
 
 function parseRSS(xml, prefix) {
@@ -1276,8 +1284,7 @@ function trackJobFromList(id, pool) {
 
 // Parse a CSV string into array of objects using first row as headers
 function parseCSV(text) {
-  const lines = text.trim().split(/?
-/);
+  const lines = text.trim().split(/\r?\n/);
   if (lines.length < 2) return [];
   // Handle quoted fields properly
   function splitCSVLine(line) {
@@ -1320,142 +1327,6 @@ async function readFile(file) {
   });
 }
 
-document.getElementById('btn-gen-resume').addEventListener('click', async () => {
-  const jobDesc = document.getElementById('r-jobdesc').value.trim();
-  if (!jobDesc) { alert('Please paste a job description first.'); return; }
-
-  const files = {
-    profile:   document.getElementById('r-profile').files[0],
-    positions: document.getElementById('r-positions').files[0],
-    skills:    document.getElementById('r-skills').files[0],
-    education: document.getElementById('r-education').files[0]
-  };
-  const hasFiles = Object.values(files).some(f => f);
-  let profile = hasFiles ? {} : getDemoProfile();
-
-  if (hasFiles) {
-    // Profile.csv — LinkedIn columns: First Name, Last Name, Maiden Name,
-    //   Address, Birth Date, Headline, Summary, Industry, Zip Code, Geo Location,
-    //   Twitter Handles, Websites, Instant Messengers
-    if (files.profile) {
-      try {
-        const raw = await readFile(files.profile);
-        // CSV returns array of rows; profile has one or two rows
-        const row = Array.isArray(raw) ? (raw[0]||{}) : raw;
-        profile.basics = {
-          firstName:    row['First Name']    || row.firstName    || row.first_name    || '',
-          lastName:     row['Last Name']     || row.lastName     || row.last_name     || '',
-          emailAddress: row['Email Address'] || row.emailAddress || row.email         || '',
-          headline:     row['Headline']      || row.headline     || '',
-          summary:      row['Summary']       || row.summary      || '',
-          location:     row['Geo Location']  || row.location     || row['Zip Code']   || ''
-        };
-      } catch(e) { console.warn('Profile read error:', e.message); }
-    }
-
-    // Positions.csv — LinkedIn columns: Company Name, Title, Description,
-    //   Location, Started On, Finished On
-    if (files.positions) {
-      try {
-        const raw = await readFile(files.positions);
-        const arr = Array.isArray(raw) ? raw : (raw.positions||raw.Positions||[raw]);
-        profile.positions = arr.filter(p => p['Company Name']||p.Company||p.company_name||p.title||p.Title).map(p => ({
-          title:       p['Title']        || p.title        || p.Title        || 'Unknown',
-          company:     p['Company Name'] || p.company_name || p.companyName  || p.Company || 'Unknown',
-          description: p['Description'] || p.description  || '',
-          location:    p['Location']    || p.location      || '',
-          startDate:   p['Started On']  || p.started_on   || p.startDate    || p['Start Date'] || '',
-          endDate:     p['Finished On'] || p.finished_on  || p.endDate      || p['End Date']   || 'Present'
-        }));
-      } catch(e) { console.warn('Positions read error:', e.message); }
-    }
-
-    // Skills.csv — LinkedIn columns: Name (one skill per row)
-    if (files.skills) {
-      try {
-        const raw = await readFile(files.skills);
-        const arr = Array.isArray(raw) ? raw : (raw.skills||raw.Skills||[]);
-        profile.skills = arr.map(s =>
-          typeof s === 'string' ? s : (s['Name']||s.name||s.Name||s.skill||'')
-        ).filter(Boolean);
-      } catch(e) { console.warn('Skills read error:', e.message); }
-    }
-
-    // Education.csv — LinkedIn columns: School Name, Start Date, End Date,
-    //   Notes, Degree Name, Activities
-    if (files.education) {
-      try {
-        const raw = await readFile(files.education);
-        const arr = Array.isArray(raw) ? raw : (raw.education||raw.Education||[]);
-        profile.education = arr.filter(e => e['School Name']||e.school_name||e.School).map(e => ({
-          school:    e['School Name']  || e.school_name || e.schoolName  || e.School    || 'Unknown',
-          degree:    e['Degree Name']  || e.degree_name || e.degreeName  || e.Degree    || '',
-          field:     e['Field Of Study']||e['Notes']   || e.fieldOfStudy|| e['Field of Study'] || '',
-          startDate: e['Start Date']   || e.start_date  || e.startDate   || '',
-          endDate:   e['End Date']     || e.end_date    || e.endDate     || ''
-        }));
-      } catch(e) { console.warn('Education read error:', e.message); }
-    }
-  }
-
-  const userSummary = document.getElementById('r-summary').value.trim();
-  const jd = jobDesc.toLowerCase();
-  const basics = profile.basics || {};
-  const positions = profile.positions || [];
-  const skills = profile.skills || ['Microsoft Office','Google Workspace','Communication','Data Entry','Canva'];
-  const education = profile.education || [];
-
-  // Calculate match score
-  let score = 0;
-  const matched = [];
-  skills.forEach(s => { if (jd.includes(s.toLowerCase())) { score += 5; matched.push(s); } });
-  ['remote','writing','editing','canva','social','data','admin','scheduling','excel','google','seo','content'].forEach(k => {
-    if (jd.includes(k)) { score += 1; matched.push(k); }
-  });
-  score = Math.min(100, score);
-
-  const name = basics.firstName ? (basics.firstName + ' ' + (basics.lastName||'')).trim() : 'Your Name';
-  const email = basics.emailAddress || 'your@email.com';
-  const summary = userSummary || basics.summary || 'Dedicated remote professional with a passion for delivering quality work.';
-
-  const posText = positions.slice(0,5).map(p =>
-    p.title + ' — ' + p.company + '\n' + (p.startDate||'') + ' – ' + (p.endDate||'Present') + '\n' + (p.description||'').slice(0,300)
-  ).join('\n\n');
-
-  const eduText = education.map(e =>
-    (e.degree||'Degree') + ' in ' + (e.field||'Field') + ' — ' + e.school + '\n' + (e.startDate||'') + ' – ' + (e.endDate||'')
-  ).join('\n\n');
-
-  const resumeText =
-    name.toUpperCase() + '\n' + email + '\n' +
-    'Match Score: ' + score + '%\n\n' +
-    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nPROFESSIONAL SUMMARY\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' + summary + '\n\n' +
-    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nWORK EXPERIENCE\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' + (posText||'No positions found.') + '\n\n' +
-    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nSKILLS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' + (skills.join(' · ')||'No skills found.') + '\n\n' +
-    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nEDUCATION\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' + (eduText||'No education found.');
-
-  document.getElementById('resume-output').innerText = resumeText;
-  document.getElementById('r-score-label').textContent = score + '%';
-  document.getElementById('r-score-fill').style.width = score + '%';
-  document.getElementById('r-tags').innerHTML = matched.slice(0,20).map(s => '<span class="tag">'+esc(s)+'</span>').join('');
-  document.getElementById('r-score-section').style.display = 'block';
-  document.getElementById('r-output-section').style.display = 'block';
-  document.getElementById('resume-output').scrollIntoView({behavior:'smooth'});
-});
-
-document.getElementById('btn-resume-pdf').addEventListener('click', () => {
-  const content = document.getElementById('resume-output').innerText;
-  const w = window.open('','_blank');
-  w.document.write('<html><head><title>Resume</title><style>body{font-family:Georgia,serif;font-size:13px;line-height:1.7;max-width:750px;margin:40px auto;color:#111;white-space:pre-wrap}</style></head><body>' + content.replace(/</g,'&lt;') + '</body></html>');
-  w.document.close(); setTimeout(() => w.print(), 500);
-});
-
-document.getElementById('btn-resume-copy').addEventListener('click', () => {
-  navigator.clipboard.writeText(document.getElementById('resume-output').innerText)
-    .then(() => alert('✅ Copied!'))
-    .catch(() => alert('Select the text manually and copy.'));
-});
-
 function getDemoProfile() {
   return {
     basics:    {firstName:'Your',lastName:'Name',emailAddress:'your@email.com',summary:'Dedicated remote professional with a passion for delivering quality work.'},
@@ -1464,35 +1335,6 @@ function getDemoProfile() {
     education: [{school:'Your University',degree:'Bachelor',field:'Business Administration',startDate:'2018',endDate:'2022'}]
   };
 }
-
-// ═══════════════════════════════════════════════════════════
-// COVER LETTER GENERATOR — identical to extension coverletter.js
-// ═══════════════════════════════════════════════════════════
-
-document.getElementById('btn-gen-cl').addEventListener('click', () => {
-  const name    = document.getElementById('cl-name').value.trim()    || 'Your Name';
-  const role    = document.getElementById('cl-role').value.trim()    || 'the advertised position';
-  const company = document.getElementById('cl-company').value.trim() || 'your company';
-  const summary = document.getElementById('cl-summary').value.trim();
-  const jobDesc = document.getElementById('cl-jobdesc').value.trim();
-  if (!jobDesc) { alert('Please paste a job description first.'); return; }
-
-  const reqs = extractCLReqs(jobDesc);
-  const today = new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
-
-  // No watermark — clean output only (identical to fixed extension)
-  const letter = name + '\n' + today + '\n\nHiring Manager\n' + company + '\n\nDear Hiring Manager,\n\n' +
-    'I am writing to express my strong interest in the ' + role + ' position at ' + company +
-    '. Having reviewed your job posting carefully, I am confident that my skills and background make me an excellent fit for this remote opportunity.\n\n' +
-    (summary || 'As a dedicated and detail-oriented remote professional, I bring a strong work ethic and a commitment to delivering high-quality results. I thrive in remote environments and am fully equipped with the tools and discipline required for remote work.') + '\n\n' +
-    'Your posting highlights the need for ' + reqs.join(', ') + ', and these align closely with my experience. I am particularly skilled in communication, time management, and adapting quickly to new platforms and workflows — qualities essential for success in this role at ' + company + '.\n\n' +
-    'I am enthusiastic about the opportunity to contribute to ' + company + "'s team and would welcome the chance to discuss how my background can meet your needs. I am available immediately and fully committed to remote, flexible work.\n\n" +
-    'Thank you sincerely for your time and consideration. I look forward to hearing from you.\n\nWarm regards,\n' + name;
-
-  document.getElementById('cl-output').innerText = letter;
-  document.getElementById('cl-output-section').style.display = 'block';
-  document.getElementById('cl-output').scrollIntoView({behavior:'smooth'});
-});
 
 function extractCLReqs(jd) {
   const kws = ['attention to detail','communication','time management','organized',
@@ -1504,200 +1346,432 @@ function extractCLReqs(jd) {
   return found.length ? found.slice(0,4) : ['excellent communication','remote work proficiency','attention to detail'];
 }
 
-document.getElementById('btn-cl-copy').addEventListener('click', () => {
-  navigator.clipboard.writeText(document.getElementById('cl-output').innerText)
-    .then(() => alert('✅ Copied to clipboard!'))
-    .catch(() => alert('Select the text manually and copy.'));
-});
-
-document.getElementById('btn-cl-print').addEventListener('click', () => {
-  const content = document.getElementById('cl-output').innerText;
-  const w = window.open('','_blank');
-  w.document.write('<html><head><title>Cover Letter</title><style>body{font-family:Georgia,serif;font-size:13px;line-height:1.8;max-width:700px;margin:40px auto;color:#111;white-space:pre-wrap}</style></head><body>' + content.replace(/</g,'&lt;') + '</body></html>');
-  w.document.close(); setTimeout(() => w.print(), 500);
-});
-
 // ═══════════════════════════════════════════════════════════
-// ALL EVENT LISTENERS — clean, no inline handlers
+// ALL EVENT LISTENERS — null-safe, wrapped in window.load
 // ═══════════════════════════════════════════════════════════
 
-// Tabs
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('page-' + btn.dataset.tab).classList.add('active');
+// Helper: safely attach event listener — never crashes if element missing
+function on(id, evt, fn) {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener(evt, fn);
+}
+function onAll(selector, evt, fn) {
+  document.querySelectorAll(selector).forEach(el => el.addEventListener(evt, fn));
+}
+
+function attachAllListeners() {
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const pg = document.getElementById('page-' + btn.dataset.tab);
+      if (pg) pg.classList.add('active');
+    });
   });
-});
 
-// Scan
-document.getElementById('btn-scan').addEventListener('click', runScan);
+  // Scan
+  on('btn-scan',  'click', runScan);
 
-// Reset & Rescan
-document.getElementById('btn-reset').addEventListener('click', () => {
-  if (confirm('Reset & Rescan?\n\nClears current jobs, history, and seen IDs so everything shows fresh.\n\nYour Tracker (applied jobs) will NOT be affected.')) {
-    allJobs = []; seenIds = [];
-    store('jobs',[]); store('seenIds',[]); store('historyIds',[]);
-    store('lastScanNewIds',[]); store('lastScan',null);
-    document.getElementById('source-report').style.display = 'none';
-    historyOpen = false;
-    document.getElementById('history-panel').style.display = 'none';
-    document.getElementById('btn-history').classList.remove('open');
-    renderJobs(); renderHistory(); updateStats();
-    showStatus('success', '✅ Fully reset! Tap Scan Now for fresh results.');
-    setTimeout(hideStatus, 5000);
-  }
-});
-
-// Edit Job Types
-document.getElementById('btn-edit-roles').addEventListener('click', () => {
-  editOpen = !editOpen;
-  const panel = document.getElementById('edit-roles-panel');
-  const btn = document.getElementById('btn-edit-roles');
-  panel.style.display = editOpen ? 'block' : 'none';
-  btn.classList.toggle('open', editOpen);
-  if (editOpen) { currentRoles = load('customRoles',null)||[...DEFAULT_ROLES]; renderRolesGrid(); panel.scrollIntoView({behavior:'smooth'}); }
-});
-document.getElementById('btn-close-edit').addEventListener('click', () => {
-  editOpen = false;
-  document.getElementById('edit-roles-panel').style.display = 'none';
-  document.getElementById('btn-edit-roles').classList.remove('open');
-});
-document.getElementById('btn-add-role').addEventListener('click', () => {
-  const input = document.getElementById('new-role-input');
-  const val = input.value.trim().toLowerCase();
-  if (!val) return;
-  if (currentRoles.includes(val)) { input.style.borderColor='var(--red)'; setTimeout(()=>{input.style.borderColor=''},1500); return; }
-  currentRoles.push(val);
-  renderRolesGrid();
-  input.value = '';
-  input.focus();
-});
-document.getElementById('new-role-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('btn-add-role').click();
-});
-document.querySelectorAll('.chip').forEach(chip => {
-  chip.addEventListener('click', () => {
-    const role = chip.textContent.trim().toLowerCase();
-    if (!currentRoles.includes(role)) { currentRoles.push(role); renderRolesGrid(); }
+  // Reset & Rescan
+  on('btn-reset', 'click', () => {
+    if (confirm('Reset & Rescan?\n\nClears current jobs, history, and seen IDs so everything shows fresh.\n\nYour Tracker (applied jobs) will NOT be affected.')) {
+      allJobs = []; seenIds = [];
+      store('jobs',[]); store('seenIds',[]); store('historyIds',[]);
+      store('lastScanNewIds',[]); store('lastScan',null);
+      const sr = document.getElementById('source-report');
+      if (sr) sr.style.display = 'none';
+      historyOpen = false;
+      const hp = document.getElementById('history-panel');
+      if (hp) hp.style.display = 'none';
+      const bh = document.getElementById('btn-history');
+      if (bh) bh.classList.remove('open');
+      renderJobs(); renderHistory(); updateStats();
+      showStatus('success', '✅ Fully reset! Tap Scan Now for fresh results.');
+      setTimeout(hideStatus, 5000);
+    }
   });
-});
-document.getElementById('btn-save-roles').addEventListener('click', saveRoles);
-document.getElementById('btn-reset-roles').addEventListener('click', () => {
-  if (confirm('Restore default job types? This replaces your custom list with the original built-in roles.')) {
-    currentRoles = [...DEFAULT_ROLES];
+
+  // Edit Job Types
+  on('btn-edit-roles', 'click', () => {
+    editOpen = !editOpen;
+    const panel = document.getElementById('edit-roles-panel');
+    const btn   = document.getElementById('btn-edit-roles');
+    if (panel) panel.style.display = editOpen ? 'block' : 'none';
+    if (btn)   btn.classList.toggle('open', editOpen);
+    if (editOpen) {
+      currentRoles = load('customRoles', null) || [...DEFAULT_ROLES];
+      renderRolesGrid();
+      if (panel) panel.scrollIntoView({behavior:'smooth'});
+    }
+  });
+  on('btn-close-edit', 'click', () => {
+    editOpen = false;
+    const panel = document.getElementById('edit-roles-panel');
+    const btn   = document.getElementById('btn-edit-roles');
+    if (panel) panel.style.display = 'none';
+    if (btn)   btn.classList.remove('open');
+  });
+  on('btn-add-role', 'click', () => {
+    const input = document.getElementById('new-role-input');
+    if (!input) return;
+    const val = input.value.trim().toLowerCase();
+    if (!val) return;
+    if (currentRoles.includes(val)) {
+      input.style.borderColor = 'var(--red)';
+      setTimeout(() => { input.style.borderColor = ''; }, 1500);
+      return;
+    }
+    currentRoles.push(val);
     renderRolesGrid();
-    saveRoles();
+    input.value = '';
+    input.focus();
+  });
+  on('new-role-input', 'keydown', e => {
+    if (e.key === 'Enter') { const b = document.getElementById('btn-add-role'); if(b) b.click(); }
+  });
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const role = chip.textContent.trim().toLowerCase();
+      if (!currentRoles.includes(role)) { currentRoles.push(role); renderRolesGrid(); }
+    });
+  });
+  on('btn-save-roles',  'click', saveRoles);
+  on('btn-reset-roles', 'click', () => {
+    if (confirm('Restore default job types? This replaces your custom list with the original built-in roles.')) {
+      currentRoles = [...DEFAULT_ROLES];
+      renderRolesGrid();
+      saveRoles();
+    }
+  });
+
+  // View History
+  on('btn-history', 'click', () => {
+    historyOpen = !historyOpen;
+    const panel = document.getElementById('history-panel');
+    const btn   = document.getElementById('btn-history');
+    if (panel) panel.style.display = historyOpen ? 'block' : 'none';
+    if (btn)   btn.classList.toggle('open', historyOpen);
+    if (historyOpen) { renderHistory(); if(panel) panel.scrollIntoView({behavior:'smooth'}); }
+  });
+  on('btn-close-hist', 'click', () => {
+    historyOpen = false;
+    const panel = document.getElementById('history-panel');
+    const btn   = document.getElementById('btn-history');
+    if (panel) panel.style.display = 'none';
+    if (btn)   btn.classList.remove('open');
+  });
+
+  // Role filters — synced between main + history
+  on('role-filter', 'change', e => {
+    roleFilter = e.target.value;
+    const h = document.getElementById('h-role-filter');
+    if (h) { h.value = roleFilter; hRole = roleFilter; }
+    renderJobs();
+    if (historyOpen) renderHistory();
+  });
+  on('h-role-filter', 'change', e => {
+    hRole = e.target.value;
+    const m = document.getElementById('role-filter');
+    if (m) { m.value = hRole; roleFilter = hRole; }
+    renderHistory(); renderJobs();
+  });
+
+  // Main filters
+  on('sort-sel',   'change', e => { sortBy    = e.target.value; renderJobs(); });
+  on('cur-filter', 'change', e => { curFilter = e.target.value; renderJobs(); });
+  on('search-q',   'input',  e => { searchQ   = e.target.value.trim(); renderJobs(); });
+
+  // History filters
+  on('h-sort',   'change', e => { hSort   = e.target.value; renderHistory(); });
+  on('h-cur',    'change', e => { hCur    = e.target.value; renderHistory(); });
+  on('h-search', 'input',  e => { hSearch = e.target.value.trim(); renderHistory(); });
+
+  // Tracker — status change via event delegation
+  const tlist = document.getElementById('tracker-list');
+  if (tlist) {
+    tlist.addEventListener('change', e => {
+      if (e.target.classList.contains('trk-status')) {
+        const entry = trackerData.find(t => t.id === e.target.dataset.id);
+        if (entry) {
+          entry.status = e.target.value;
+          e.target.className = 'status-sel st-' + e.target.value + ' trk-status';
+          store('tracker', trackerData);
+          const stats = {total:trackerData.length, applied:0, interview:0, offer:0, rejected:0};
+          trackerData.forEach(t => { if (stats[t.status]!==undefined) stats[t.status]++; });
+          ['total','applied','interview','offer','rejected'].forEach(k => {
+            const el = document.getElementById('ts-'+k);
+            if (el) el.textContent = stats[k]||0;
+          });
+        }
+      }
+    });
   }
-});
 
-// View History
-document.getElementById('btn-history').addEventListener('click', () => {
-  historyOpen = !historyOpen;
-  const panel = document.getElementById('history-panel');
-  const btn = document.getElementById('btn-history');
-  panel.style.display = historyOpen ? 'block' : 'none';
-  btn.classList.toggle('open', historyOpen);
-  if (historyOpen) { renderHistory(); panel.scrollIntoView({behavior:'smooth'}); }
-});
-document.getElementById('btn-close-hist').addEventListener('click', () => {
-  historyOpen = false;
-  document.getElementById('history-panel').style.display = 'none';
-  document.getElementById('btn-history').classList.remove('open');
-});
+  on('btn-add-app', 'click', () => {
+    const form = document.getElementById('add-app-form');
+    if (!form) return;
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    const td = document.getElementById('t-date');
+    if (td) td.value = new Date().toISOString().split('T')[0];
+  });
+  on('btn-cancel-app', 'click', () => {
+    const form = document.getElementById('add-app-form');
+    if (form) form.style.display = 'none';
+  });
+  on('btn-save-app', 'click', () => {
+    const titleEl = document.getElementById('t-title');
+    const coEl    = document.getElementById('t-company');
+    const title = titleEl ? titleEl.value.trim() : '';
+    const co    = coEl    ? coEl.value.trim()    : '';
+    if (!title || !co) { alert('Job Title and Company are required.'); return; }
+    const entry = {
+      id:'tr-'+Date.now(), title, co,
+      date:  document.getElementById('t-date')   ? document.getElementById('t-date').value   : new Date().toISOString(),
+      link:  document.getElementById('t-link')   ? document.getElementById('t-link').value.trim()   : '',
+      score: document.getElementById('t-score')  ? document.getElementById('t-score').value  : '0',
+      status:document.getElementById('t-status') ? document.getElementById('t-status').value : 'applied',
+      notes: document.getElementById('t-notes')  ? document.getElementById('t-notes').value.trim()  : ''
+    };
+    trackerData.unshift(entry);
+    store('tracker', trackerData);
+    renderTracker();
+    const form = document.getElementById('add-app-form');
+    if (form) form.style.display = 'none';
+    ['t-title','t-company','t-link','t-score','t-notes'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    alert('✅ "' + title + '" added to tracker!');
+  });
 
-// Role filter (synced between main + history)
-document.getElementById('role-filter').addEventListener('change', e => {
-  roleFilter = e.target.value;
-  const h = document.getElementById('h-role-filter');
-  if (h) { h.value = roleFilter; hRole = roleFilter; }
-  renderJobs();
-  if (historyOpen) renderHistory();
-});
-document.getElementById('h-role-filter').addEventListener('change', e => {
-  hRole = e.target.value;
-  const m = document.getElementById('role-filter');
-  if (m) { m.value = hRole; roleFilter = hRole; }
-  renderHistory(); renderJobs();
-});
+  on('btn-dl-csv', 'click', () => {
+    if (!trackerData.length) { alert('No applications to export.'); return; }
+    const rows = [['Job Title','Company','Date Applied','Match Score','Status','Link','Notes'],
+      ...trackerData.map(e => [e.title,e.co,e.date?new Date(e.date).toLocaleDateString():'',e.score+'%',e.status,e.link||'',e.notes||''])
+    ].map(r => r.map(c => '"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([rows],{type:'text/csv'}));
+    a.download = 'job-applications-' + new Date().toISOString().split('T')[0] + '.csv';
+    a.click();
+  });
 
-// Main filters
-document.getElementById('sort-sel').addEventListener('change', e => { sortBy = e.target.value; renderJobs(); });
-document.getElementById('cur-filter').addEventListener('change', e => { curFilter = e.target.value; renderJobs(); });
-document.getElementById('search-q').addEventListener('input', e => { searchQ = e.target.value.trim(); renderJobs(); });
+  on('btn-clear-tracker', 'click', () => {
+    if (confirm('Clear ALL application records? This cannot be undone.')) {
+      trackerData = []; store('tracker',[]); renderTracker();
+    }
+  });
 
-// History filters
-document.getElementById('h-sort').addEventListener('change', e => { hSort = e.target.value; renderHistory(); });
-document.getElementById('h-cur').addEventListener('change', e => { hCur = e.target.value; renderHistory(); });
-document.getElementById('h-search').addEventListener('input', e => { hSearch = e.target.value.trim(); renderHistory(); });
-
-// Tracker
-document.getElementById('btn-add-app').addEventListener('click', () => {
-  const form = document.getElementById('add-app-form');
-  form.style.display = form.style.display === 'none' ? 'block' : 'none';
-  document.getElementById('t-date').value = new Date().toISOString().split('T')[0];
-});
-document.getElementById('btn-cancel-app').addEventListener('click', () => {
-  document.getElementById('add-app-form').style.display = 'none';
-});
-document.getElementById('btn-save-app').addEventListener('click', () => {
-  const title = document.getElementById('t-title').value.trim();
-  const co    = document.getElementById('t-company').value.trim();
-  if (!title || !co) { alert('Job Title and Company are required.'); return; }
-  const entry = {
-    id:'tr-'+Date.now(), title, co,
-    date: document.getElementById('t-date').value || new Date().toISOString(),
-    link: document.getElementById('t-link').value.trim(),
-    score: document.getElementById('t-score').value || '0',
-    status: document.getElementById('t-status').value,
-    notes: document.getElementById('t-notes').value.trim()
-  };
-  trackerData.unshift(entry);
-  store('tracker', trackerData);
-  renderTracker();
-  document.getElementById('add-app-form').style.display = 'none';
-  ['t-title','t-company','t-link','t-score','t-notes'].forEach(id => { document.getElementById(id).value = ''; });
-  alert('✅ "' + title + '" added to tracker!');
-});
-
-document.getElementById('btn-dl-csv').addEventListener('click', () => {
-  if (!trackerData.length) { alert('No applications to export.'); return; }
-  const rows = [['Job Title','Company','Date Applied','Match Score','Status','Link','Notes'],
-    ...trackerData.map(e => [e.title,e.co,e.date?new Date(e.date).toLocaleDateString():'',e.score+'%',e.status,e.link||'',e.notes||''])
-  ].map(r => r.map(c => '"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([rows],{type:'text/csv'}));
-  a.download = 'job-applications-' + new Date().toISOString().split('T')[0] + '.csv';
-  a.click();
-});
-
-document.getElementById('btn-clear-tracker').addEventListener('click', () => {
-  if (confirm('Clear ALL application records? This cannot be undone.')) {
-    trackerData = []; store('tracker',[]); renderTracker();
+  // Apply page
+  const cl = document.getElementById('checklist');
+  if (cl) {
+    cl.addEventListener('change', e => {
+      if (e.target.type === 'checkbox') e.target.parentElement.classList.toggle('done', e.target.checked);
+    });
   }
-});
+  on('btn-a-track', 'click', () => {
+    const titleEl = document.getElementById('a-title');
+    const coEl    = document.getElementById('a-company');
+    const title = titleEl ? titleEl.value.trim() : '';
+    const co    = coEl    ? coEl.value.trim()    : '';
+    if (!title || !co) { alert('Please enter a Job Title and Company.'); return; }
+    const entry = {
+      id:'tr-'+Date.now(), title, co,
+      link:  document.getElementById('a-url')   ? document.getElementById('a-url').value.trim()  : '',
+      score: document.getElementById('a-score') ? document.getElementById('a-score').value        : '0',
+      status:'applied', notes:'', date:new Date().toISOString()
+    };
+    trackerData.unshift(entry);
+    store('tracker', trackerData);
+    renderTracker();
+    const st = document.getElementById('a-status');
+    if (st) { st.textContent = '✅ "' + title + '" added to Tracker!'; st.style.display = 'block'; setTimeout(() => { st.style.display='none'; }, 4000); }
+  });
 
-// Apply page
-document.getElementById('checklist').addEventListener('change', e => {
-  if (e.target.type === 'checkbox') e.target.parentElement.classList.toggle('done', e.target.checked);
-});
-document.getElementById('btn-a-track').addEventListener('click', () => {
-  const title = document.getElementById('a-title').value.trim();
-  const co    = document.getElementById('a-company').value.trim();
-  if (!title || !co) { alert('Please enter a Job Title and Company.'); return; }
-  const entry = {id:'tr-'+Date.now(), title, co,
-    link:document.getElementById('a-url').value.trim(),
-    score:document.getElementById('a-score').value||'0',
-    status:'applied', notes:'', date:new Date().toISOString()};
-  trackerData.unshift(entry);
-  store('tracker', trackerData);
-  renderTracker();
-  const st = document.getElementById('a-status');
-  st.textContent = '✅ "' + title + '" added to Tracker!';
-  st.style.display = 'block';
-  setTimeout(() => { st.style.display='none'; }, 4000);
-});
+  // Resume generator
+  on('btn-gen-resume', 'click', async () => {
+    const jdEl = document.getElementById('r-jobdesc');
+    const jobDesc = jdEl ? jdEl.value.trim() : '';
+    if (!jobDesc) { alert('Please paste a job description first.'); return; }
+
+    const files = {
+      profile:   document.getElementById('r-profile')   ? document.getElementById('r-profile').files[0]   : null,
+      positions: document.getElementById('r-positions') ? document.getElementById('r-positions').files[0] : null,
+      skills:    document.getElementById('r-skills')   ? document.getElementById('r-skills').files[0]   : null,
+      education: document.getElementById('r-education') ? document.getElementById('r-education').files[0] : null
+    };
+    const hasFiles = Object.values(files).some(f => f);
+    let profile = hasFiles ? {} : getDemoProfile();
+
+    if (hasFiles) {
+      if (files.profile) {
+        try {
+          const raw = await readFile(files.profile);
+          const row = Array.isArray(raw) ? (raw[0]||{}) : raw;
+          profile.basics = {
+            firstName:    row['First Name']    || row.firstName    || row.first_name    || '',
+            lastName:     row['Last Name']     || row.lastName     || row.last_name     || '',
+            emailAddress: row['Email Address'] || row.emailAddress || row.email         || '',
+            summary:      row['Summary']       || row.summary      || '',
+            location:     row['Geo Location']  || row.location     || row['Zip Code']   || ''
+          };
+        } catch(e) {}
+      }
+      if (files.positions) {
+        try {
+          const raw = await readFile(files.positions);
+          const arr = Array.isArray(raw) ? raw : (raw.positions||raw.Positions||[raw]);
+          profile.positions = arr.filter(p => p['Company Name']||p.Company||p.company_name||p.title||p.Title).map(p => ({
+            title:       p['Title']        || p.title        || p.Title        || 'Unknown',
+            company:     p['Company Name'] || p.company_name || p.companyName  || p.Company || 'Unknown',
+            description: p['Description'] || p.description  || '',
+            location:    p['Location']    || p.location      || '',
+            startDate:   p['Started On']  || p.started_on   || p.startDate    || p['Start Date'] || '',
+            endDate:     p['Finished On'] || p.finished_on  || p.endDate      || p['End Date']   || 'Present'
+          }));
+        } catch(e) {}
+      }
+      if (files.skills) {
+        try {
+          const raw = await readFile(files.skills);
+          const arr = Array.isArray(raw) ? raw : (raw.skills||raw.Skills||[]);
+          profile.skills = arr.map(s => typeof s==='string' ? s : (s['Name']||s.name||s.Name||s.skill||'')).filter(Boolean);
+        } catch(e) {}
+      }
+      if (files.education) {
+        try {
+          const raw = await readFile(files.education);
+          const arr = Array.isArray(raw) ? raw : (raw.education||raw.Education||[]);
+          profile.education = arr.filter(e => e['School Name']||e.school_name||e.School).map(e => ({
+            school:    e['School Name']  || e.school_name || e.schoolName  || e.School    || 'Unknown',
+            degree:    e['Degree Name']  || e.degree_name || e.degreeName  || e.Degree    || '',
+            field:     e['Field Of Study']||e['Notes']   || e.fieldOfStudy|| e['Field of Study'] || '',
+            startDate: e['Start Date']   || e.start_date  || e.startDate   || '',
+            endDate:   e['End Date']     || e.end_date    || e.endDate     || ''
+          }));
+        } catch(e) {}
+      }
+    }
+
+    const userSummaryEl = document.getElementById('r-summary');
+    const userSummary = userSummaryEl ? userSummaryEl.value.trim() : '';
+    const jd = jobDesc.toLowerCase();
+    const basics    = profile.basics    || {};
+    const positions = profile.positions || [];
+    const skills    = profile.skills    || ['Microsoft Office','Google Workspace','Communication','Data Entry','Canva'];
+    const education = profile.education || [];
+
+    let score = 0;
+    const matched = [];
+    skills.forEach(s => { if (jd.includes(s.toLowerCase())) { score += 5; matched.push(s); } });
+    ['remote','writing','editing','canva','social','data','admin','scheduling','excel','google','seo','content'].forEach(k => {
+      if (jd.includes(k)) { score += 1; matched.push(k); }
+    });
+    score = Math.min(100, score);
+
+    const firstName = basics['First Name'] || basics.firstName || 'Your';
+    const lastName  = basics['Last Name']  || basics.lastName  || 'Name';
+    const email     = basics['Email Address'] || basics.emailAddress || 'your@email.com';
+    const summary   = userSummary || basics['Summary'] || basics.summary || 'Dedicated remote professional with a passion for delivering quality work.';
+
+    const posText = positions.slice(0,5).map(p =>
+      p.title + ' — ' + p.company + '\n' + (p.startDate||'') + ' – ' + (p.endDate||'Present') + '\n' + (p.description||'').slice(0,300)
+    ).join('\n\n');
+
+    const eduText = education.map(e =>
+      (e.degree||'Degree') + ' in ' + (e.field||'Field') + ' — ' + e.school + '\n' + (e.startDate||'') + ' – ' + (e.endDate||'')
+    ).join('\n\n');
+
+    const resumeText =
+      (firstName + ' ' + lastName).trim().toUpperCase() + '\n' + email + '\n' +
+      'Match Score: ' + score + '%\n\n' +
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nPROFESSIONAL SUMMARY\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' + summary + '\n\n' +
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nWORK EXPERIENCE\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' + (posText||'No positions found.') + '\n\n' +
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nSKILLS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' + (skills.join(' · ')||'No skills found.') + '\n\n' +
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nEDUCATION\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' + (eduText||'No education found.');
+
+    const ro = document.getElementById('resume-output');
+    if (ro) ro.innerText = resumeText;
+    const sl = document.getElementById('r-score-label');
+    const sf = document.getElementById('r-score-fill');
+    const rt = document.getElementById('r-tags');
+    const rsc = document.getElementById('r-score-section');
+    const ros = document.getElementById('r-output-section');
+    if (sl) sl.textContent = score + '%';
+    if (sf) sf.style.width = score + '%';
+    if (rt) rt.innerHTML = matched.slice(0,20).map(s => '<span class="tag">'+esc(s)+'</span>').join('');
+    if (rsc) rsc.style.display = 'block';
+    if (ros) { ros.style.display = 'block'; ros.scrollIntoView({behavior:'smooth'}); }
+  });
+
+  on('btn-resume-pdf', 'click', () => {
+    const ro = document.getElementById('resume-output');
+    const content = ro ? ro.innerText : '';
+    const w = window.open('','_blank');
+    if (w) {
+      w.document.write('<html><head><title>Resume</title><style>body{font-family:Georgia,serif;font-size:13px;line-height:1.7;max-width:750px;margin:40px auto;color:#111;white-space:pre-wrap}</style></head><body>' + content.replace(/</g,'&lt;') + '</body></html>');
+      w.document.close(); setTimeout(() => w.print(), 500);
+    }
+  });
+  on('btn-resume-copy', 'click', () => {
+    const ro = document.getElementById('resume-output');
+    if (!ro) return;
+    navigator.clipboard.writeText(ro.innerText)
+      .then(() => alert('✅ Copied!'))
+      .catch(() => alert('Select the text manually and copy.'));
+  });
+
+  // Cover letter
+  on('btn-gen-cl', 'click', () => {
+    const nameEl    = document.getElementById('cl-name');
+    const roleEl    = document.getElementById('cl-role');
+    const companyEl = document.getElementById('cl-company');
+    const summaryEl = document.getElementById('cl-summary');
+    const jdEl      = document.getElementById('cl-jobdesc');
+    const name    = nameEl    ? nameEl.value.trim()    : 'Your Name';
+    const role    = roleEl    ? roleEl.value.trim()    : 'the advertised position';
+    const company = companyEl ? companyEl.value.trim() : 'your company';
+    const summary = summaryEl ? summaryEl.value.trim() : '';
+    const jobDesc = jdEl      ? jdEl.value.trim()      : '';
+    if (!jobDesc) { alert('Please paste a job description first.'); return; }
+
+    const reqs = extractCLReqs(jobDesc);
+    const today = new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+
+    const letter = name + '\n' + today + '\n\nHiring Manager\n' + company + '\n\nDear Hiring Manager,\n\n' +
+      'I am writing to express my strong interest in the ' + role + ' position at ' + company +
+      '. Having reviewed your job posting carefully, I am confident that my skills and background make me an excellent fit for this remote opportunity.\n\n' +
+      (summary || 'As a dedicated and detail-oriented remote professional, I bring a strong work ethic and a commitment to delivering high-quality results. I thrive in remote environments and am fully equipped with the tools and discipline required for remote work.') + '\n\n' +
+      'Your posting highlights the need for ' + reqs.join(', ') + ', and these align closely with my experience. I am particularly skilled in communication, time management, and adapting quickly to new platforms and workflows — qualities essential for success in this role at ' + company + '.\n\n' +
+      'I am enthusiastic about the opportunity to contribute to ' + company + "\u2019s team and would welcome the chance to discuss how my background can meet your needs. I am available immediately and fully committed to remote, flexible work.\n\n" +
+      'Thank you sincerely for your time and consideration. I look forward to hearing from you.\n\nWarm regards,\n' + name;
+
+    const clo = document.getElementById('cl-output');
+    const clos = document.getElementById('cl-output-section');
+    if (clo) clo.innerText = letter;
+    if (clos) { clos.style.display = 'block'; clos.scrollIntoView({behavior:'smooth'}); }
+  });
+  on('btn-cl-copy', 'click', () => {
+    const clo = document.getElementById('cl-output');
+    if (!clo) return;
+    navigator.clipboard.writeText(clo.innerText)
+      .then(() => alert('✅ Copied to clipboard!'))
+      .catch(() => alert('Select the text manually and copy.'));
+  });
+  on('btn-cl-print', 'click', () => {
+    const clo = document.getElementById('cl-output');
+    const content = clo ? clo.innerText : '';
+    const w = window.open('','_blank');
+    if (w) {
+      w.document.write('<html><head><title>Cover Letter</title><style>body{font-family:Georgia,serif;font-size:13px;line-height:1.8;max-width:700px;margin:40px auto;color:#111;white-space:pre-wrap}</style></head><body>' + content.replace(/</g,'&lt;') + '</body></html>');
+      w.document.close(); setTimeout(() => w.print(), 500);
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// UTILITIES
 
 // ═══════════════════════════════════════════════════════════
 // UTILITIES
@@ -1724,14 +1798,26 @@ function esc(s) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// INIT
+// INIT — run after DOM fully ready
 // ═══════════════════════════════════════════════════════════
 
-syncRoleDropdowns();
-renderJobs();
-updateStats();
-renderTracker();
-updateHistBadge();
+window.addEventListener('load', function() {
+  try {
+    attachAllListeners();
+    syncRoleDropdowns();
+    renderJobs();
+    updateStats();
+    renderTracker();
+    updateHistBadge();
+  } catch(err) {
+    console.error('[RJBP] Init error:', err);
+    // Show visible error bar so user knows something went wrong
+    const bar = document.createElement('div');
+    bar.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#7f1d1d;color:#fca5a5;padding:10px 16px;font-size:12px;z-index:9999;border-top:2px solid #991b1b';
+    bar.textContent = '⚠️ JS Error: ' + err.message + ' — Please hard-refresh: Ctrl+Shift+R (PC) or Cmd+Shift+R (Mac)';
+    document.body.appendChild(bar);
+  }
+});
 </script>
 </body>
 </html>
