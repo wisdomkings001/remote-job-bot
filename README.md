@@ -1,17 +1,53 @@
-# Remote Job Bot Pro — Web App
+# 🤖 Remote Job Bot Pro
 
-Automatically scans 8 remote job boards, generates resumes and cover letters.
+An all-in-one remote job hunting tool that automatically scans 8 major job boards simultaneously and surfaces the best-matching opportunities for freelance and remote workers — no account, no install, runs directly in your browser.
 
 Built by **TechCraft & Coding By Wisdom**
 
+---
+
+## ✨ Features
+
+- 🔍 **Auto Job Scanner** — Scans 8 sources every 15 minutes: RemoteOK, Remotive, We Work Remotely, Remote.co, Upwork, Jobicy, Himalayas, and RemoteOK role feeds
+- 🎯 **Smart Role Matching** — Filters and scores jobs by match percentage based on your target roles
+- 📋 **Job History** — Keeps a full history of every job shown across all scans
+- ⚙️ **Custom Job Types** — Edit exactly which roles to search for without touching any code
+- 📄 **Resume Generator** — Upload your LinkedIn CSV export files and generate a tailored resume with a match score
+- ✉️ **Cover Letter Writer** — Auto-generates a professional cover letter from any job description
+- 📊 **Application Tracker** — Track every job you apply to with status, notes and CSV export
+- ⚡ **Pre-Apply Checklist** — Step-by-step checklist before submitting any application
+- 🔗 **Quick Apply Links** — One-tap links to all major remote job boards
+
+---
+
+## 🚀 How to Use
+
+1. Open the app link in any browser on your phone or computer
+2. Tap **Scan Now** to search all 8 job boards instantly
+3. Filter results by job type, currency or keyword
+4. Tap **Apply →** on any job to open the original listing
+5. Use the **Resume** and **Cover Letter** tabs to prepare your application
+6. Track every application in the **Tracker** tab
+
+---
+
+## 📁 Free Resume Generator
+
+The resume generator reads your inputed data and generates a resume to match the job description
+
+---
+
+# 🌍 Live Website
+
+👉 [Open Remote Job Bot Pro](https://yourusername.github.io/remote-job-bot)
+
+---
+
+## 📬 Contact
+
+For inquiries and custom builds:
 [![Instagram](https://img.shields.io/badge/Instagram-kingswisdom935-E1306C?logo=instagram)](https://www.instagram.com/kingswisdom935)
 
-## Live App
-Visit the live app at: `https://YOUR-USERNAME.github.io/YOUR-REPO-NAME/`
+---
 
-## Features
-- 🔍 Scans 8 job boards every 15 minutes automatically
-- 📄 Resume generator with LinkedIn CSV support
-- ✉️ Cover letter writer
-- 📊 Application tracker
-- 💱 Currency filter — 83 world currencies
+*Free to use. Built with ❤️ for remote job seekers worldwide.*
