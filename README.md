@@ -42,7 +42,7 @@ The resume generator reads your real LinkedIn data. To get your files:
 
 ---
 
-## 🌍 Live Demo
+## 🌍 Live Website
 
 👉 [Open Remote Job Bot Pro](https://yourusername.github.io/remote-job-bot)
 
