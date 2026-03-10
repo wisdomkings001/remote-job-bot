@@ -1,0 +1,2000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="theme-color" content="#0a0f1a"/>
+<title>Remote Job Bot Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap"/>
+<style>
+/* ═══════════════════════════════════════════════════
+   REMOTE JOB BOT PRO — Web App
+   TechCraft & Coding By Wisdom
+   Exact mirror of PC extension — all features
+═══════════════════════════════════════════════════ */
+:root {
+  --bg:#0a0f1a; --bg2:#111827; --bg3:#1a2236; --border:#1e2d45;
+  --gold:#f6ad55; --gold2:#fbd38d; --blue:#3b82f6; --blue2:#60a5fa;
+  --green:#10b981; --green2:#34d399; --red:#ef4444; --text:#e2e8f0;
+  --text2:#94a3b8; --text3:#4a5568; --radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:var(--bg2)} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+/* ── Brand Bar ── */
+.brand-bar{background:linear-gradient(90deg,#080c14,#0f1829,#080c14);border-bottom:2px solid var(--gold);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:8px}
+.brand-left{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.brand-avatar-fallback{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#c05621);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;box-shadow:0 0 10px rgba(246,173,85,.4)}
+.brand-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);box-shadow:0 0 10px rgba(246,173,85,.4);flex-shrink:0}
+.brand-name{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--gold)}
+.brand-sub{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px}
+.brand-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.brand-right span{font-size:10px;color:var(--text2);white-space:nowrap}
+.brand-link{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;background:rgba(246,173,85,.1);border:1px solid rgba(246,173,85,.3);color:var(--gold);text-decoration:none;font-size:11px;font-weight:600;white-space:nowrap;transition:all .2s}
+.brand-link:hover,.brand-link:active{background:rgba(246,173,85,.2);border-color:var(--gold)}
+
+/* ── Tabs ── */
+.tab-nav{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:sticky;top:54px;z-index:99}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{flex-shrink:0;padding:12px 16px;border:none;background:none;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.tab-btn.active{color:var(--blue2);border-bottom-color:var(--blue);background:rgba(59,130,246,.05)}
+
+/* ── Pages ── */
+.page{display:none;padding:16px;max-width:900px;margin:0 auto;animation:fadeIn .2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ── Cards ── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+.card-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--blue2);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;border:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-blue{background:var(--blue);color:#fff} .btn-blue:hover{background:#2563eb}
+.btn-green{background:#065f46;color:var(--green2)} .btn-green:hover{background:#047857}
+.btn-purple{background:#4c1d95;color:#c4b5fd} .btn-purple:hover{background:#5b21b6}
+.btn-gold{background:#78350f;color:var(--gold2)} .btn-gold:hover{background:#92400e}
+.btn-red{background:#7f1d1d;color:#fca5a5} .btn-red:hover{background:#991b1b}
+.btn-gray{background:var(--bg3);color:var(--text2);border:1px solid var(--border)} .btn-gray:hover{background:var(--border)}
+.btn-teal{background:#134e4a;color:#5eead4} .btn-teal:hover{background:#0f766e}
+.btn-hist{background:#0a1020;color:var(--blue2);border:1px solid #1e3a5f}
+.btn-hist.open{background:#1e3a5f}
+.btn-edit{background:#0a2010;color:var(--green2);border:1px solid #065f46}
+.btn-edit.open{background:#065f46}
+.btn-sm{padding:6px 12px;font-size:11px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+
+/* ── Stats ── */
+.stats-bar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;padding:12px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius)}
+.stat{display:flex;flex-direction:column;gap:2px}
+.stat-val{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--blue2);line-height:1}
+.stat-lbl{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+
+/* ── Source Report ── */
+#source-report{display:none;margin-bottom:14px}
+.src-header{font-size:11px;color:var(--text2);padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0;border-bottom:none}
+.src-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:0 0 var(--radius) var(--radius);overflow:hidden}
+.src-card{background:var(--bg2);padding:8px 12px;font-size:11px}
+.src-card.ok{border-left:3px solid var(--green)}
+.src-card.err{border-left:3px solid var(--red)}
+.src-card.pending{border-left:3px solid var(--gold)}
+.src-name{font-weight:600;color:var(--text);margin-bottom:3px;font-size:11px}
+.src-stat{color:var(--text2)} .src-stat strong{color:var(--green2)}
+.src-stat.red{color:#fca5a5}
+
+/* ── Status Banner ── */
+#scan-status-bar{display:none;padding:10px 14px;border-radius:var(--radius);margin-bottom:14px;font-size:12px;font-weight:500;border:1px solid;line-height:1.5}
+.s-info{background:#1e3a5f;color:#93c5fd;border-color:#1e40af}
+.s-success{background:#064e3b;color:var(--green2);border-color:#065f46}
+.s-warning{background:#78350f;color:var(--gold2);border-color:#92400e}
+.s-error{background:#7f1d1d;color:#fca5a5;border-color:#991b1b}
+
+/* ── Spinner ── */
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:4px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Role Filter Bar ── */
+.role-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.role-bar label{font-size:11px;font-weight:700;color:var(--blue2);white-space:nowrap}
+.role-count{font-size:11px;color:var(--text3)}
+
+/* ── Main Filter Bar ── */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius)}
+.filter-bar label{font-size:11px;color:var(--text2);flex-shrink:0}
+.filter-bar select,.filter-bar input{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 8px;font-size:12px;font-family:'DM Sans',sans-serif}
+.filter-bar input{flex:1;min-width:100px}
+
+/* ── Job Cards ── */
+#job-list,#history-list{display:flex;flex-direction:column;gap:8px}
+.job-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;transition:border-color .2s}
+.job-card:hover,.job-card:active{border-color:var(--blue)}
+.job-card.top{border-color:rgba(16,185,129,.4);background:linear-gradient(135deg,#0a1f14,var(--bg2))}
+.job-title-txt{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);line-height:1.3}
+.job-co{font-size:11px;color:var(--text2);margin-top:2px}
+.job-desc{font-size:12px;color:var(--text2);line-height:1.5;margin:8px 0}
+.job-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:600;white-space:nowrap}
+.b-hi{background:#064e3b;color:var(--green2)} .b-mid{background:#78350f;color:var(--gold2)} .b-lo{background:#2e1065;color:#c4b5fd}
+.b-cur{background:var(--bg3);color:var(--blue2);border:1px solid var(--border)} .b-src{background:#1e3a5f;color:#93c5fd}
+.job-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.empty-state{text-align:center;padding:50px 20px;color:var(--text3)}
+.empty-icon{font-size:48px;margin-bottom:16px}
+.empty-title{font-family:'Syne',sans-serif;font-size:16px;color:var(--text2);margin-bottom:8px}
+.empty-sub{font-size:13px;line-height:1.6}
+
+/* ── History Panel ── */
+#history-panel{display:none;margin-bottom:14px}
+.hist-inner{background:#080e1a;border:2px solid #1e3a5f;border-radius:var(--radius);overflow:hidden}
+.hist-header{background:linear-gradient(90deg,#0d1b2a,#111827);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1e3a5f;flex-wrap:wrap;gap:8px}
+.hist-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--blue2)}
+.hist-sub{font-size:11px;color:var(--text3)}
+.hist-body{padding:12px}
+.hist-filter{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.hist-filter label{font-size:11px;color:var(--text2)}
+.hist-filter select,.hist-filter input{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 7px;font-size:12px;font-family:'DM Sans',sans-serif}
+.hist-filter input{flex:1;min-width:90px}
+
+/* ── Edit Roles Panel ── */
+#edit-roles-panel{display:none;margin-bottom:14px}
+.edit-inner{background:#050f1a;border:2px solid var(--blue);border-radius:var(--radius);overflow:hidden}
+.edit-header{background:linear-gradient(90deg,#0d1b2a,#111827);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1e3a5f;flex-wrap:wrap;gap:8px}
+.edit-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--blue2)}
+.edit-body{padding:14px}
+.edit-tip{font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6}
+.roles-grid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px;min-height:38px;padding:8px;background:var(--bg3);border:1px solid var(--border);border-radius:8px}
+.role-tag{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;background:#1a3a5c;border:1px solid #2d4a7a;border-radius:999px;font-size:12px;color:#90cdf4}
+.role-rm{cursor:pointer;color:#fc8181;font-size:15px;font-weight:700;line-height:1;padding:0 1px;border-radius:50%;transition:background .15s}
+.role-rm:hover,.role-rm:active{background:#7f1d1d}
+.add-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.add-input{flex:1;min-width:160px;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;transition:border-color .2s}
+.add-input:focus{outline:none;border-color:var(--blue)}
+.chips{margin-bottom:12px;font-size:12px;color:var(--text2);line-height:2}
+.chips strong{color:var(--text)}
+.chip{display:inline-block;padding:3px 9px;border-radius:999px;background:rgba(30,58,95,.2);border:1px solid #1e3a5f;color:var(--blue2);cursor:pointer;font-size:11px;margin:2px 3px;transition:all .15s}
+.chip:hover,.chip:active{background:#1e3a5f;color:#fff}
+.edit-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding-top:12px;border-top:1px solid var(--border)}
+.save-status{font-size:12px;color:var(--green2);display:none}
+
+/* ── Forms ── */
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:12px;color:var(--text2);margin-bottom:5px;font-weight:500}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;transition:border-color .2s;-webkit-appearance:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--blue)}
+.form-textarea{resize:vertical;min-height:100px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.form-grid{grid-template-columns:1fr}}
+
+/* ── Resume / CL Output ── */
+#resume-output,#cl-output{background:#fff;color:#111;border-radius:8px;padding:24px;font-family:Georgia,serif;font-size:13px;line-height:1.7;min-height:250px;white-space:pre-wrap;outline:none;border:2px solid var(--border);margin-top:12px}
+#resume-output:focus,#cl-output:focus{border-color:var(--blue)}
+
+/* ── Score Bar ── */
+.score-bar-track{background:var(--bg3);border-radius:999px;height:8px;overflow:hidden;margin:8px 0}
+.score-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--green));transition:width .5s ease}
+.score-label{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--green2)}
+.tags-wrap{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.tag{padding:2px 8px;border-radius:999px;font-size:10px;background:#1e3a5f;color:#93c5fd;border:1px solid rgba(30,64,175,.3)}
+
+/* ── Tracker ── */
+.tracker-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+@media(max-width:480px){.tracker-stats{grid-template-columns:repeat(3,1fr)}}
+.tstat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 8px;text-align:center}
+.tstat-num{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;line-height:1}
+.tstat-lbl{font-size:9px;color:var(--text2);text-transform:uppercase;margin-top:3px;letter-spacing:.5px}
+.tracker-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px}
+.tracker-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px}
+.tracker-title{font-weight:600;font-size:13px}
+.tracker-co{font-size:11px;color:var(--text2)}
+.tracker-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.status-sel{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 8px;font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer}
+.st-applied{border-color:#1e40af;color:#93c5fd;background:#1e3a5f}
+.st-interview{border-color:#92400e;color:var(--gold2);background:#78350f}
+.st-offer{border-color:#065f46;color:var(--green2);background:#064e3b}
+.st-rejected{border-color:#991b1b;color:#fca5a5;background:#7f1d1d}
+
+/* ── Apply / Checklist ── */
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);margin-bottom:6px;font-size:13px;transition:all .2s;cursor:pointer}
+.checklist li.done{text-decoration:line-through;color:var(--text3);background:var(--bg2)}
+.checklist li input[type=checkbox]{width:16px;height:16px;accent-color:var(--green);flex-shrink:0;cursor:pointer}
+.qlinks{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:8px}
+.qlink{display:flex;align-items:center;gap:7px;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);text-decoration:none;font-size:12px;font-weight:500;transition:all .2s}
+.qlink:hover,.qlink:active{background:var(--border);border-color:var(--blue);color:var(--blue2)}
+
+/* ── Notice ── */
+.notice{padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:12px;line-height:1.5;border:1px solid}
+.notice-info{background:rgba(30,58,95,.2);color:#93c5fd;border-color:rgba(30,64,175,.3)}
+.notice-warn{background:rgba(120,53,15,.2);color:var(--gold2);border-color:rgba(146,64,14,.3)}
+
+@media(max-width:480px){
+  .brand-right span{display:none}
+  .page{padding:12px}
+  .stats-bar{gap:16px;padding:10px 12px}
+  .stat-val{font-size:18px}
+  .btn{padding:9px 12px;font-size:12px}
+  .job-card{padding:12px}
+  .job-title-txt{font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ BRAND BAR ═══ -->
+<div class="brand-bar">
+  <div class="brand-left">
+    <div class="brand-avatar-fallback" id="av-fallback">👑</div>
+    <img id="av-img" class="brand-avatar" src="profile.png" alt=""
+         style="display:none"
+         onload="this.style.display='block';document.getElementById('av-fallback').style.display='none'"
+         onerror="this.style.display='none'"/>
+    <div>
+      <div class="brand-name">TechCraft &amp; Coding By Wisdom</div>
+      <div class="brand-sub">Made with ❤️ for Remote Job Seekers</div>
+    </div>
+  </div>
+  <div class="brand-right">
+    <span>For more inquiries</span>
+    <a class="brand-link" href="https://www.instagram.com/kingswisdom935?igsh=NGlhNjh2eW8wdDVt" target="_blank" rel="noopener">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      Click here
+    </a>
+  </div>
+</div>
+
+<!-- ═══ TAB NAV ═══ -->
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="dashboard">🔍 Jobs</button>
+  <button class="tab-btn" data-tab="resume">📄 Resume</button>
+  <button class="tab-btn" data-tab="coverletter">✉️ Cover Letter</button>
+  <button class="tab-btn" data-tab="tracker">📊 Tracker</button>
+  <button class="tab-btn" data-tab="apply">⚡ Apply</button>
+</nav>
+
+<!-- ═══════════════════════════════════════
+     PAGE 1 — DASHBOARD
+═══════════════════════════════════════ -->
+<div class="page active" id="page-dashboard">
+
+  <div class="btn-row" style="margin-top:14px">
+    <button class="btn btn-blue"  id="btn-scan">🔍 Scan Now</button>
+    <button class="btn btn-red"   id="btn-reset">🔄 Reset &amp; Rescan</button>
+    <button class="btn btn-edit"  id="btn-edit-roles">⚙️ Edit Job Types</button>
+    <button class="btn btn-hist"  id="btn-history">
+      📋 View History
+      <span id="hist-badge" style="background:#1e3a5f;border-radius:999px;padding:1px 7px;font-size:10px;margin-left:3px">0</span>
+    </button>
+  </div>
+
+  <!-- Status Banner -->
+  <div id="scan-status-bar"></div>
+
+  <!-- ── Edit Job Types Panel ── -->
+  <div id="edit-roles-panel">
+    <div class="edit-inner">
+      <div class="edit-header">
+        <span class="edit-title">⚙️ Edit Job Types to Search For</span>
+        <button class="btn btn-sm" id="btn-close-edit" style="background:#1e3a5f;color:#90cdf4;padding:4px 12px">✕ Close</button>
+      </div>
+      <div class="edit-body">
+        <p class="edit-tip">
+          These are the job types the scanner looks for across all 8 sources.<br/>
+          <strong>Tap ✕</strong> on any tag to remove it. Type a new one and tap <strong>➕ Add</strong>.<br/>
+          Tap <strong>💾 Save Changes</strong> — takes effect on the very next scan.
+        </p>
+        <div class="roles-grid" id="roles-grid"></div>
+        <div class="add-row">
+          <input class="add-input" id="new-role-input" placeholder="e.g. bookkeeper, proofreader..."/>
+          <button class="btn btn-blue btn-sm" id="btn-add-role">➕ Add</button>
+        </div>
+        <div class="chips">
+          <strong>💡 Suggestions:</strong>
+          <span class="chip">customer support</span>
+          <span class="chip">project manager</span>
+          <span class="chip">bookkeeper</span>
+          <span class="chip">proofreader</span>
+          <span class="chip">email marketer</span>
+          <span class="chip">web designer</span>
+          <span class="chip">podcast editor</span>
+          <span class="chip">recruiter</span>
+          <span class="chip">translator</span>
+          <span class="chip">accountant</span>
+        </div>
+        <div class="edit-actions">
+          <button class="btn btn-teal" id="btn-save-roles">💾 Save Changes</button>
+          <button class="btn btn-gray btn-sm" id="btn-reset-roles">↩️ Restore Defaults</button>
+          <span class="save-status" id="save-status-msg"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-val" id="stat-jobs">0</div><div class="stat-lbl">New Jobs</div></div>
+    <div class="stat"><div class="stat-val" id="stat-score" style="color:var(--green2)">—</div><div class="stat-lbl">Top Match</div></div>
+    <div class="stat"><div class="stat-val" id="stat-time" style="font-size:13px;color:var(--text2)">Never</div><div class="stat-lbl">Last Scan</div></div>
+  </div>
+
+  <!-- Source Report -->
+  <div id="source-report"></div>
+
+  <!-- Role Filter -->
+  <div class="role-bar">
+    <label>🎯 Job Type:</label>
+    <select id="role-filter" class="form-select" style="max-width:190px;padding:6px 8px;font-size:12px"></select>
+    <span class="role-count" id="role-count"></span>
+  </div>
+
+  <!-- Main Filters -->
+  <div class="filter-bar">
+    <label>Sort:</label>
+    <select id="sort-sel">
+      <option value="score">Match Score</option>
+      <option value="time">Newest First</option>
+      <option value="source">By Source</option>
+      <option value="title">Title A-Z</option>
+    </select>
+    <label>Currency:</label>
+    <select id="cur-filter">
+      <option value="all">All Currencies</option>
+    </select>
+    <input id="search-q" placeholder="Search titles..." style="min-width:100px;max-width:160px"/>
+  </div>
+
+  <!-- Job List -->
+  <div id="job-list">
+    <div class="empty-state">
+      <div class="empty-icon">🤖</div>
+      <div class="empty-title">Ready to Find Jobs</div>
+      <div class="empty-sub">Tap <strong>Scan Now</strong> to search 8 remote job boards.<br/>Auto-scans every 15 minutes while this page is open.</div>
+    </div>
+  </div>
+
+  <!-- History Panel -->
+  <div id="history-panel">
+    <div class="hist-inner">
+      <div class="hist-header">
+        <div>
+          <div class="hist-title">📋 Job History</div>
+          <div class="hist-sub">All jobs from previous scans. Cleared when you Reset &amp; Rescan.</div>
+        </div>
+        <button class="btn btn-sm" id="btn-close-hist" style="background:#1e3a5f;color:#90cdf4;padding:4px 12px">✕ Close</button>
+      </div>
+      <div class="hist-body">
+        <div class="hist-filter">
+          <label>🎯 Job Type:</label>
+          <select id="h-role-filter"></select>
+          <label>Sort:</label>
+          <select id="h-sort">
+            <option value="score">Match Score</option>
+            <option value="time">Newest First</option>
+            <option value="title">Title A-Z</option>
+          </select>
+          <label>Currency:</label>
+          <select id="h-cur">
+            <option value="all">All Currencies</option>
+          </select>
+          <input id="h-search" placeholder="Search history..."/>
+        </div>
+        <div id="history-list">
+          <div class="empty-state" style="padding:30px 20px">
+            <div class="empty-icon">📋</div>
+            <div class="empty-title">No History Yet</div>
+            <div class="empty-sub">Previous scan results will appear here after your second scan.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end page-dashboard -->
+
+<!-- ═══════════════════════════════════════
+     PAGE 2 — RESUME
+═══════════════════════════════════════ -->
+<div class="page" id="page-resume">
+  <div style="margin-top:14px"></div>
+  <div class="notice notice-info">
+    📁 Upload your <strong>LinkedIn CSV files</strong> from your LinkedIn data export (Profile.csv, Positions.csv, Skills.csv, Education.csv).<br/>
+    <span style="font-size:11px;color:#7dd3fc;">LinkedIn exports CSV files — just upload them directly. No conversion needed. Or skip to Generate for a demo resume.</span>
+  </div>
+  <div class="card">
+    <div class="card-title">1. LinkedIn Files (Optional)</div>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">Profile.csv <span style="color:var(--text3);font-size:10px">(from LinkedIn export)</span></label><input type="file" id="r-profile" accept=".csv,.json" class="form-input" style="padding:6px"/></div>
+      <div class="form-group"><label class="form-label">Positions.csv <span style="color:var(--text3);font-size:10px">(work history)</span></label><input type="file" id="r-positions" accept=".csv,.json" class="form-input" style="padding:6px"/></div>
+      <div class="form-group"><label class="form-label">Skills.csv <span style="color:var(--text3);font-size:10px">(your skills)</span></label><input type="file" id="r-skills" accept=".csv,.json" class="form-input" style="padding:6px"/></div>
+      <div class="form-group"><label class="form-label">Education.csv <span style="color:var(--text3);font-size:10px">(schools/degrees)</span></label><input type="file" id="r-education" accept=".csv,.json" class="form-input" style="padding:6px"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Your Summary (optional)</label><textarea class="form-textarea" id="r-summary" placeholder="Experienced remote professional with 3+ years..." rows="3"></textarea></div>
+  </div>
+  <div class="card">
+    <div class="card-title">2. Job Description</div>
+    <textarea class="form-textarea" id="r-jobdesc" placeholder="Paste the full job description here..." rows="8"></textarea>
+  </div>
+  <div class="btn-row"><button class="btn btn-blue" id="btn-gen-resume">⚡ Generate Resume</button></div>
+  <div id="r-score-section" style="display:none" class="card">
+    <div class="card-title">Match Score</div>
+    <div class="score-label" id="r-score-label">0%</div>
+    <div class="score-bar-track"><div class="score-bar-fill" id="r-score-fill" style="width:0%"></div></div>
+    <div class="form-label" style="margin-top:8px">Matched keywords:</div>
+    <div class="tags-wrap" id="r-tags"></div>
+  </div>
+  <div id="r-output-section" style="display:none">
+    <div class="card">
+      <div class="card-title">3. Edit &amp; Download</div>
+      <div id="resume-output" contenteditable="true"></div>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn btn-green" id="btn-resume-pdf">⬇️ Print / Save PDF</button>
+        <button class="btn btn-gray"  id="btn-resume-copy">📋 Copy Text</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE 3 — COVER LETTER
+═══════════════════════════════════════ -->
+<div class="page" id="page-coverletter">
+  <div style="margin-top:14px"></div>
+  <div class="card">
+    <div class="card-title">Your Details</div>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">Your Full Name</label><input class="form-input" id="cl-name" placeholder="Jane Smith"/></div>
+      <div class="form-group"><label class="form-label">Role Applying For</label><input class="form-input" id="cl-role" placeholder="Virtual Assistant"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Company Name</label><input class="form-input" id="cl-company" placeholder="Acme Remote Co."/></div>
+    <div class="form-group"><label class="form-label">Your Summary / About</label><textarea class="form-textarea" id="cl-summary" placeholder="Experienced VA with 3+ years managing schedules..." rows="4"></textarea></div>
+    <div class="form-group"><label class="form-label">Job Description</label><textarea class="form-textarea" id="cl-jobdesc" placeholder="Paste the job description here..." rows="6"></textarea></div>
+  </div>
+  <div class="btn-row"><button class="btn btn-purple" id="btn-gen-cl">✨ Generate Cover Letter</button></div>
+  <div id="cl-output-section" style="display:none">
+    <div class="card">
+      <div class="card-title">Edit &amp; Export</div>
+      <div id="cl-output" contenteditable="true"></div>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn btn-green" id="btn-cl-copy">📋 Copy to Clipboard</button>
+        <button class="btn btn-gray"  id="btn-cl-print">🖨️ Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE 4 — TRACKER
+═══════════════════════════════════════ -->
+<div class="page" id="page-tracker">
+  <div style="margin-top:14px"></div>
+  <div class="tracker-stats">
+    <div class="tstat"><div class="tstat-num" id="ts-total"    style="color:var(--blue2)">0</div><div class="tstat-lbl">Total</div></div>
+    <div class="tstat"><div class="tstat-num" id="ts-applied"  style="color:var(--blue2)">0</div><div class="tstat-lbl">Applied</div></div>
+    <div class="tstat"><div class="tstat-num" id="ts-interview" style="color:var(--gold)">0</div><div class="tstat-lbl">Interview</div></div>
+    <div class="tstat"><div class="tstat-num" id="ts-offer"    style="color:var(--green2)">0</div><div class="tstat-lbl">Offers</div></div>
+    <div class="tstat"><div class="tstat-num" id="ts-rejected" style="color:var(--red)">0</div><div class="tstat-lbl">Rejected</div></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-blue"  id="btn-add-app">➕ Add Application</button>
+    <button class="btn btn-green" id="btn-dl-csv">⬇️ Download CSV</button>
+    <button class="btn btn-red"   id="btn-clear-tracker">🗑️ Clear All</button>
+  </div>
+  <div class="card" id="add-app-form" style="display:none">
+    <div class="card-title">Add New Application</div>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">Job Title *</label><input class="form-input" id="t-title" placeholder="Virtual Assistant"/></div>
+      <div class="form-group"><label class="form-label">Company *</label><input class="form-input" id="t-company" placeholder="Acme Corp"/></div>
+      <div class="form-group"><label class="form-label">Date Applied</label><input type="date" class="form-input" id="t-date"/></div>
+      <div class="form-group"><label class="form-label">Match Score (%)</label><input type="number" class="form-input" id="t-score" placeholder="75" min="0" max="100"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Job Link</label><input type="url" class="form-input" id="t-link" placeholder="https://..."/></div>
+    <div class="form-group"><label class="form-label">Status</label>
+      <select class="form-select" id="t-status">
+        <option value="applied">Applied</option>
+        <option value="interview">Interview</option>
+        <option value="offer">Offer 🎉</option>
+        <option value="rejected">Rejected</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="t-notes" rows="2" placeholder="Any notes..."></textarea></div>
+    <div class="btn-row">
+      <button class="btn btn-blue" id="btn-save-app">💾 Save</button>
+      <button class="btn btn-gray" id="btn-cancel-app">Cancel</button>
+    </div>
+  </div>
+  <div id="tracker-list"></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PAGE 5 — APPLY
+═══════════════════════════════════════ -->
+<div class="page" id="page-apply">
+  <div style="margin-top:14px"></div>
+  <div class="card">
+    <div class="card-title">📌 Current Job Details</div>
+    <div class="form-group"><label class="form-label">Job URL</label><input type="url" class="form-input" id="a-url" placeholder="https://..."/></div>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">Job Title</label><input class="form-input" id="a-title" placeholder="Virtual Assistant"/></div>
+      <div class="form-group"><label class="form-label">Company</label><input class="form-input" id="a-company" placeholder="Acme Remote"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Match Score (%)</label><input type="number" class="form-input" id="a-score" placeholder="85"/></div>
+    <div class="btn-row"><button class="btn btn-blue" id="btn-a-track">📊 Add to Tracker</button></div>
+    <div class="notice notice-info" id="a-status" style="display:none;margin-top:8px"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">✅ Pre-Application Checklist</div>
+    <ul class="checklist" id="checklist">
+      <li><input type="checkbox"/> Read the full job description carefully</li>
+      <li><input type="checkbox"/> Tailor your resume to match keywords</li>
+      <li><input type="checkbox"/> Write or customize your cover letter</li>
+      <li><input type="checkbox"/> Check salary/currency matches your preference</li>
+      <li><input type="checkbox"/> Review company info online</li>
+      <li><input type="checkbox"/> Prepare portfolio or work samples if needed</li>
+      <li><input type="checkbox"/> Confirm remote/work-from-home is confirmed in posting</li>
+      <li><input type="checkbox"/> Submit application and save confirmation</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-title">🔗 Quick Apply Sites</div>
+    <div class="qlinks">
+      <a class="qlink" href="https://remoteok.com" target="_blank">🌍 RemoteOK</a>
+      <a class="qlink" href="https://remotive.com" target="_blank">🚀 Remotive</a>
+      <a class="qlink" href="https://weworkremotely.com" target="_blank">💼 WeWorkRemotely</a>
+      <a class="qlink" href="https://remote.co/remote-jobs" target="_blank">🏠 Remote.co</a>
+      <a class="qlink" href="https://jobicy.com" target="_blank">💰 Jobicy</a>
+      <a class="qlink" href="https://himalayas.app/jobs" target="_blank">⛰️ Himalayas</a>
+      <a class="qlink" href="https://www.upwork.com/nx/find-work/" target="_blank">💼 Upwork</a>
+      <a class="qlink" href="https://jobspresso.co" target="_blank">☕ Jobspresso</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🎨 Fiverr Buyer Requests</div>
+    <div class="notice notice-warn">Fiverr cannot be auto-scanned. Open these links and send offers manually — check daily as requests expire fast.</div>
+    <div class="qlinks">
+      <a class="qlink" href="https://www.fiverr.com/buyer_requests?category=graphics-design" target="_blank">🎨 Design</a>
+      <a class="qlink" href="https://www.fiverr.com/buyer_requests?category=video-animation" target="_blank">🎬 Video</a>
+      <a class="qlink" href="https://www.fiverr.com/buyer_requests?category=writing-translation" target="_blank">✍️ Writing</a>
+      <a class="qlink" href="https://www.fiverr.com/buyer_requests?category=digital-marketing" target="_blank">📣 Marketing</a>
+      <a class="qlink" href="https://www.fiverr.com/buyer_requests?category=data" target="_blank">📊 Data Entry</a>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════════
+// CONSTANTS — identical to extension
+// ═══════════════════════════════════════════════════════════
+
+const DEFAULT_ROLES = [
+  'virtual assistant','graphic designer','photo editor','video editor',
+  'social media manager','copywriter','data entry','transcriptionist',
+  'content creator','administrative','va ','motion graphic','illustrator'
+];
+
+// All world currency codes — every currency gets equal score boost
+const PRIORITY_CURRENCIES = [
+  'USD','GBP','EUR','CAD','AUD','NZD','CHF','JPY','CNY','HKD','SGD',
+  'INR','PKR','BDT','LKR','NPR','PHP','IDR','MYR','THB','VND','KHR','MMK',
+  'NGN','GHS','KES','ZAR','ETB','UGX','TZS','RWF','MAD','EGP','ZMW','XAF','XOF','AOA','MZN',
+  'BRL','MXN','ARS','CLP','COP','PEN','BOB','PYG','UYU','DOP','JMD','TTD',
+  'SAR','AED','QAR','KWD','BHD','OMR','JOD','IQD','TRY','ILS','LBP','IRR',
+  'RUB','UAH','PLN','CZK','HUF','RON','SEK','NOK','DKK','ISK','BGN','RSD',
+  'MDL','GEL','AZN','KZT','UZS','AMD','BYN','TWD','KRW',
+  '$','£','€','₦','₹','₱','₩','¥','R$','C$','A$','NZ$'
+];
+
+const CORS = [
+  u => 'https://corsproxy.io/?' + encodeURIComponent(u),
+  u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+  u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u)
+];
+
+// ═══════════════════════════════════════════════════════════
+// STORAGE — wraps localStorage identical to chrome.storage
+// ═══════════════════════════════════════════════════════════
+
+function store(key, val) {
+  try { localStorage.setItem('rjbp_' + key, JSON.stringify(val)); } catch(e) {}
+}
+function load(key, def) {
+  try {
+    const v = localStorage.getItem('rjbp_' + key);
+    return v !== null ? JSON.parse(v) : def;
+  } catch(e) { return def; }
+}
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+
+let allJobs      = load('jobs', []);
+let seenIds      = load('seenIds', []);
+let trackerData  = load('tracker', []);
+let currentRoles = load('customRoles', null) || [...DEFAULT_ROLES];
+
+// Main table filters
+let sortBy    = 'score';
+let curFilter = 'all';
+let searchQ   = '';
+let roleFilter = 'all';
+
+// History filters
+let hSort   = 'score';
+let hCur    = 'all';
+let hSearch = '';
+let hRole   = 'all';
+
+let scanning     = false;
+let historyOpen  = false;
+let editOpen     = false;
+
+// ═══════════════════════════════════════════════════════════
+// ROLE MATCHING — identical to extension
+// ═══════════════════════════════════════════════════════════
+
+function isRoleMatch(job) {
+  const text = (job.title + ' ' + (job.description||'') + ' ' + (job.tags||[]).join(' ')).toLowerCase();
+  return currentRoles.some(r => text.includes(r.trim()));
+}
+
+function calcScore(job) {
+  let score = 0;
+  const text = (job.title + ' ' + (job.description||'') + ' ' + (job.tags||[]).join(' ')).toLowerCase();
+  currentRoles.forEach(r => { if (job.title.toLowerCase().includes(r.trim())) score += 15; });
+  ['remote','freelance','photoshop','illustrator','premiere','canva','figma','excel',
+   'google docs','social media','instagram','facebook','tiktok','seo','content','blog',
+   'writing','editing','caption','organized','detail','communication','admin',
+   'scheduling','research','transcription','typing','accuracy','video','audio','podcast'
+  ].forEach(kw => { if (text.includes(kw)) score += 1; });
+  if (PRIORITY_CURRENCIES.some(c => text.includes(c.toLowerCase()) || (job.salary||'').includes(c))) score += 10;
+  return Math.min(100, score);
+}
+
+function detectCur(job) {
+  const t = (job.title||'') + ' ' + (job.description||'') + ' ' + (job.salary||'');
+  if (/£|GBP\b/i.test(t)) return 'GBP';
+  if (/€|EUR\b/i.test(t)) return 'EUR';
+  if (/₦|NGN\b/i.test(t)) return 'NGN';
+  if (/₹|INR\b/i.test(t)) return 'INR';
+  if (/₱|PHP\b/i.test(t)) return 'PHP';
+  if (/₩|KRW\b/i.test(t)) return 'KRW';
+  if (/¥|JPY\b/i.test(t) && !/CNY|RMB/i.test(t)) return 'JPY';
+  if (/CNY\b|RMB\b/i.test(t)) return 'CNY';
+  if (/R\$|BRL\b/i.test(t)) return 'BRL';
+  if (/C\$|CAD\b/i.test(t)) return 'CAD';
+  if (/A\$|AUD\b/i.test(t)) return 'AUD';
+  if (/NZ\$|NZD\b/i.test(t)) return 'NZD';
+  if (/CHF\b/i.test(t)) return 'CHF';
+  if (/ZAR\b/i.test(t)) return 'ZAR';
+  if (/GHS\b/i.test(t)) return 'GHS';
+  if (/KES\b/i.test(t)) return 'KES';
+  if (/ETB\b/i.test(t)) return 'ETB';
+  if (/UGX\b/i.test(t)) return 'UGX';
+  if (/TZS\b/i.test(t)) return 'TZS';
+  if (/RWF\b/i.test(t)) return 'RWF';
+  if (/MAD\b/i.test(t)) return 'MAD';
+  if (/EGP\b/i.test(t)) return 'EGP';
+  if (/ZMW\b/i.test(t)) return 'ZMW';
+  if (/XAF\b/i.test(t)) return 'XAF';
+  if (/XOF\b/i.test(t)) return 'XOF';
+  if (/AOA\b/i.test(t)) return 'AOA';
+  if (/MZN\b/i.test(t)) return 'MZN';
+  if (/PKR\b/i.test(t)) return 'PKR';
+  if (/BDT\b/i.test(t)) return 'BDT';
+  if (/LKR\b/i.test(t)) return 'LKR';
+  if (/NPR\b/i.test(t)) return 'NPR';
+  if (/IDR\b/i.test(t)) return 'IDR';
+  if (/MYR\b|RM\s/i.test(t)) return 'MYR';
+  if (/SGD\b/i.test(t)) return 'SGD';
+  if (/HKD\b/i.test(t)) return 'HKD';
+  if (/TWD\b/i.test(t)) return 'TWD';
+  if (/THB\b/i.test(t)) return 'THB';
+  if (/VND\b/i.test(t)) return 'VND';
+  if (/KHR\b/i.test(t)) return 'KHR';
+  if (/MMK\b/i.test(t)) return 'MMK';
+  if (/MXN\b/i.test(t)) return 'MXN';
+  if (/ARS\b/i.test(t)) return 'ARS';
+  if (/CLP\b/i.test(t)) return 'CLP';
+  if (/COP\b/i.test(t)) return 'COP';
+  if (/PEN\b/i.test(t)) return 'PEN';
+  if (/BOB\b/i.test(t)) return 'BOB';
+  if (/PYG\b/i.test(t)) return 'PYG';
+  if (/UYU\b/i.test(t)) return 'UYU';
+  if (/DOP\b/i.test(t)) return 'DOP';
+  if (/JMD\b/i.test(t)) return 'JMD';
+  if (/TTD\b/i.test(t)) return 'TTD';
+  if (/SAR\b/i.test(t)) return 'SAR';
+  if (/AED\b/i.test(t)) return 'AED';
+  if (/QAR\b/i.test(t)) return 'QAR';
+  if (/KWD\b/i.test(t)) return 'KWD';
+  if (/BHD\b/i.test(t)) return 'BHD';
+  if (/OMR\b/i.test(t)) return 'OMR';
+  if (/JOD\b/i.test(t)) return 'JOD';
+  if (/IQD\b/i.test(t)) return 'IQD';
+  if (/TRY\b/i.test(t)) return 'TRY';
+  if (/ILS\b/i.test(t)) return 'ILS';
+  if (/LBP\b/i.test(t)) return 'LBP';
+  if (/RUB\b/i.test(t)) return 'RUB';
+  if (/UAH\b/i.test(t)) return 'UAH';
+  if (/PLN\b/i.test(t)) return 'PLN';
+  if (/CZK\b/i.test(t)) return 'CZK';
+  if (/HUF\b/i.test(t)) return 'HUF';
+  if (/RON\b/i.test(t)) return 'RON';
+  if (/SEK\b/i.test(t)) return 'SEK';
+  if (/NOK\b/i.test(t)) return 'NOK';
+  if (/DKK\b/i.test(t)) return 'DKK';
+  if (/ISK\b/i.test(t)) return 'ISK';
+  if (/BGN\b/i.test(t)) return 'BGN';
+  if (/RSD\b/i.test(t)) return 'RSD';
+  if (/KZT\b/i.test(t)) return 'KZT';
+  if (/GEL\b/i.test(t)) return 'GEL';
+  if (/AZN\b/i.test(t)) return 'AZN';
+  if (/\$|USD\b/i.test(t)) return 'USD';
+  return 'N/A';
+}
+
+// ── Rebuild currency dropdowns dynamically from all known jobs ──
+// All world currencies — always shown in full regardless of scan results
+const ALL_CURRENCIES = [
+  {code:'USD', label:'USD — US Dollar'},
+  {code:'GBP', label:'GBP — British Pound'},
+  {code:'EUR', label:'EUR — Euro'},
+  {code:'CAD', label:'CAD — Canadian Dollar'},
+  {code:'AUD', label:'AUD — Australian Dollar'},
+  {code:'NZD', label:'NZD — New Zealand Dollar'},
+  {code:'CHF', label:'CHF — Swiss Franc'},
+  {code:'JPY', label:'JPY — Japanese Yen'},
+  {code:'CNY', label:'CNY — Chinese Yuan'},
+  {code:'HKD', label:'HKD — Hong Kong Dollar'},
+  {code:'SGD', label:'SGD — Singapore Dollar'},
+  {code:'TWD', label:'TWD — Taiwan Dollar'},
+  {code:'KRW', label:'KRW — South Korean Won'},
+  {code:'INR', label:'INR — Indian Rupee'},
+  {code:'PKR', label:'PKR — Pakistani Rupee'},
+  {code:'BDT', label:'BDT — Bangladeshi Taka'},
+  {code:'LKR', label:'LKR — Sri Lankan Rupee'},
+  {code:'NPR', label:'NPR — Nepalese Rupee'},
+  {code:'PHP', label:'PHP — Philippine Peso'},
+  {code:'IDR', label:'IDR — Indonesian Rupiah'},
+  {code:'MYR', label:'MYR — Malaysian Ringgit'},
+  {code:'THB', label:'THB — Thai Baht'},
+  {code:'VND', label:'VND — Vietnamese Dong'},
+  {code:'KHR', label:'KHR — Cambodian Riel'},
+  {code:'MMK', label:'MMK — Myanmar Kyat'},
+  {code:'NGN', label:'NGN — Nigerian Naira'},
+  {code:'GHS', label:'GHS — Ghanaian Cedi'},
+  {code:'KES', label:'KES — Kenyan Shilling'},
+  {code:'ZAR', label:'ZAR — South African Rand'},
+  {code:'ETB', label:'ETB — Ethiopian Birr'},
+  {code:'UGX', label:'UGX — Ugandan Shilling'},
+  {code:'TZS', label:'TZS — Tanzanian Shilling'},
+  {code:'RWF', label:'RWF — Rwandan Franc'},
+  {code:'MAD', label:'MAD — Moroccan Dirham'},
+  {code:'EGP', label:'EGP — Egyptian Pound'},
+  {code:'ZMW', label:'ZMW — Zambian Kwacha'},
+  {code:'ZWL', label:'ZWL — Zimbabwean Dollar'},
+  {code:'XAF', label:'XAF — Central African CFA'},
+  {code:'XOF', label:'XOF — West African CFA'},
+  {code:'AOA', label:'AOA — Angolan Kwanza'},
+  {code:'MZN', label:'MZN — Mozambican Metical'},
+  {code:'BRL', label:'BRL — Brazilian Real'},
+  {code:'MXN', label:'MXN — Mexican Peso'},
+  {code:'ARS', label:'ARS — Argentine Peso'},
+  {code:'CLP', label:'CLP — Chilean Peso'},
+  {code:'COP', label:'COP — Colombian Peso'},
+  {code:'PEN', label:'PEN — Peruvian Sol'},
+  {code:'BOB', label:'BOB — Bolivian Boliviano'},
+  {code:'PYG', label:'PYG — Paraguayan Guarani'},
+  {code:'UYU', label:'UYU — Uruguayan Peso'},
+  {code:'DOP', label:'DOP — Dominican Peso'},
+  {code:'JMD', label:'JMD — Jamaican Dollar'},
+  {code:'TTD', label:'TTD — Trinidad & Tobago Dollar'},
+  {code:'SAR', label:'SAR — Saudi Riyal'},
+  {code:'AED', label:'AED — UAE Dirham'},
+  {code:'QAR', label:'QAR — Qatari Riyal'},
+  {code:'KWD', label:'KWD — Kuwaiti Dinar'},
+  {code:'BHD', label:'BHD — Bahraini Dinar'},
+  {code:'OMR', label:'OMR — Omani Rial'},
+  {code:'JOD', label:'JOD — Jordanian Dinar'},
+  {code:'IQD', label:'IQD — Iraqi Dinar'},
+  {code:'ILS', label:'ILS — Israeli Shekel'},
+  {code:'TRY', label:'TRY — Turkish Lira'},
+  {code:'RUB', label:'RUB — Russian Ruble'},
+  {code:'UAH', label:'UAH — Ukrainian Hryvnia'},
+  {code:'PLN', label:'PLN — Polish Zloty'},
+  {code:'CZK', label:'CZK — Czech Koruna'},
+  {code:'HUF', label:'HUF — Hungarian Forint'},
+  {code:'RON', label:'RON — Romanian Leu'},
+  {code:'SEK', label:'SEK — Swedish Krona'},
+  {code:'NOK', label:'NOK — Norwegian Krone'},
+  {code:'DKK', label:'DKK — Danish Krone'},
+  {code:'ISK', label:'ISK — Icelandic Krona'},
+  {code:'BGN', label:'BGN — Bulgarian Lev'},
+  {code:'RSD', label:'RSD — Serbian Dinar'},
+  {code:'MDL', label:'MDL — Moldovan Leu'},
+  {code:'GEL', label:'GEL — Georgian Lari'},
+  {code:'AZN', label:'AZN — Azerbaijani Manat'},
+  {code:'KZT', label:'KZT — Kazakhstani Tenge'},
+  {code:'UZS', label:'UZS — Uzbekistani Som'},
+  {code:'AMD', label:'AMD — Armenian Dram'},
+  {code:'BYN', label:'BYN — Belarusian Ruble'},
+  {code:'N/A', label:'N/A — Currency Unknown'},
+];
+
+function buildCurrencyDropdowns() {
+  const opts = '<option value="all">All Currencies</option>' +
+    ALL_CURRENCIES.map(c => '<option value="' + esc(c.code) + '">' + esc(c.label) + '</option>').join('');
+  ['cur-filter','h-cur'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const prev = el.value;
+    el.innerHTML = opts;
+    if ([...el.options].some(o => o.value === prev)) el.value = prev;
+  });
+}
+
+function applyRoleFilter(jobs, role) {
+  if (!role || role === 'all') return jobs;
+  return jobs.filter(j => {
+    const t = (j.title + ' ' + (j.description||'') + ' ' + (j.tags||[]).join(' ')).toLowerCase();
+    return t.includes(role.toLowerCase());
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// STORAGE LOGIC — identical to extension storeNewJobs
+// ═══════════════════════════════════════════════════════════
+
+function storeNewJobs(matchedJobs) {
+  const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const recent = matchedJobs.filter(j => j.postedAt >= cutoff);
+  const trulyNew = recent.filter(j => !seenIds.includes(j.id));
+
+  // ALWAYS archive previous scan IDs to history FIRST
+  // (this was the bug — it was only happening when trulyNew > 0)
+  const prevNewIds = load('lastScanNewIds', []);
+  const existingHistory = load('historyIds', []);
+  const updatedHistory = [
+    ...existingHistory,
+    ...prevNewIds.filter(id => !existingHistory.includes(id))
+  ].slice(-2000);
+  store('historyIds', updatedHistory);
+
+  if (trulyNew.length === 0) {
+    store('lastScanNewIds', []);
+    return 0;
+  }
+
+  // Add new jobs to allJobs
+  trulyNew.forEach(j => { allJobs.unshift(j); seenIds.push(j.id); });
+  allJobs = dedupe(allJobs).slice(0, 500);
+  seenIds = seenIds.slice(-5000);
+
+  store('jobs', allJobs);
+  store('seenIds', seenIds);
+  store('lastScanNewIds', trulyNew.map(j => j.id));
+
+  return trulyNew.length;
+}
+
+// ═══════════════════════════════════════════════════════════
+// DISPLAY LOGIC — shows only lastScanNewIds jobs (not all)
+// ═══════════════════════════════════════════════════════════
+
+function getDisplayJobs() {
+  const ids = load('lastScanNewIds', null);
+  if (ids === null) return allJobs; // no scan yet — show all stored
+  if (ids.length === 0) return [];  // scan ran, nothing new
+  const idSet = new Set(ids);
+  return allJobs.filter(j => idSet.has(j.id));
+}
+
+function getHistoryJobs() {
+  const ids = load('historyIds', []);
+  if (!ids.length) return [];
+  const idSet = new Set(ids);
+  return allJobs.filter(j => idSet.has(j.id));
+}
+
+// ═══════════════════════════════════════════════════════════
+// FETCH WITH PROXY FALLBACK
+// ═══════════════════════════════════════════════════════════
+
+async function proxyFetch(url, isXML) {
+  let lastErr;
+  for (const makeUrl of CORS) {
+    try {
+      // Use manual AbortController instead of AbortSignal.timeout() for browser compatibility
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 14000);
+      let r;
+      try {
+        r = await fetch(makeUrl(url), {
+          headers: { Accept: isXML ? 'application/rss+xml,application/xml,text/xml,*/*' : 'application/json,*/*' },
+          signal: controller.signal
+        });
+      } finally {
+        clearTimeout(timer);
+      }
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return isXML ? await r.text() : await r.json();
+    } catch(e) { lastErr = e; }
+  }
+  throw new Error('All proxies failed: ' + (lastErr && lastErr.message ? lastErr.message : String(lastErr)));
+}
+
+function parseRSS(xml, prefix) {
+  const doc = new DOMParser().parseFromString(xml, 'text/xml');
+  if (doc.querySelector('parsererror')) throw new Error('XML parse error');
+  return Array.from(doc.querySelectorAll('item')).map((item, i) => {
+    const title   = getXML(item, 'title');
+    const link    = getXML(item, 'link') || getXML(item, 'guid');
+    const rawDesc = getXML(item, 'description');
+    const pubDate = getXML(item, 'pubDate');
+    let co = 'Unknown', cleanTitle = title;
+    const m = title.match(/^(.+?)\s+at\s+(.+?)$/i);
+    if (m) { cleanTitle = m[1].trim(); co = m[2].trim(); }
+    const budget = (rawDesc||'').match(/\$([\d,]+)/);
+    return {
+      id:          prefix + '-' + btoa(encodeURIComponent(link||title+i)).replace(/[^a-zA-Z0-9]/g,'').slice(0,20),
+      title:       cleanTitle || title || 'Unknown',
+      description: stripHtml(rawDesc||'').slice(0,600),
+      company:     co,
+      url:         link || '',
+      postedAt:    pubDate ? new Date(pubDate).getTime() : Date.now(),
+      tags:        [],
+      salary:      budget ? '$' + budget[1] : ''
+    };
+  });
+}
+
+function getXML(el, tag) {
+  const n = el.querySelector(tag);
+  return n ? (n.textContent || n.innerHTML || '').trim() : '';
+}
+
+// ═══════════════════════════════════════════════════════════
+// SOURCES — 8 sources matching extension exactly
+// ═══════════════════════════════════════════════════════════
+
+async function fetchRemoteOK() {
+  const data = await proxyFetch('https://remoteok.com/api');
+  if (!Array.isArray(data)) throw new Error('Not array');
+  return data.filter(j => j && j.id && j.position).map(j => ({
+    id:'remoteok-'+j.id, title:j.position||'Unknown',
+    description:stripHtml(j.description||'').slice(0,600),
+    company:j.company||'Unknown', url:j.url||'https://remoteok.com',
+    postedAt:j.epoch?j.epoch*1000:Date.now(), tags:j.tags||[], salary:j.salary||''
+  }));
+}
+
+async function fetchRemotive() {
+  const cats = ['writing','design','marketing','other','customer-support'];
+  const all = [];
+  for (const cat of cats) {
+    try {
+      const data = await proxyFetch('https://remotive.com/api/remote-jobs?category='+cat+'&limit=50');
+      (data.jobs||[]).forEach(j => all.push({
+        id:'remotive-'+j.id, title:j.title||'Unknown',
+        description:stripHtml(j.description||'').slice(0,600),
+        company:j.company_name||'Unknown', url:j.url||'',
+        postedAt:j.publication_date?new Date(j.publication_date).getTime():Date.now(),
+        tags:j.tags||[], salary:j.salary||''
+      }));
+    } catch(e) { console.warn('[RJBP] Remotive '+cat+':', e.message); }
+  }
+  return all;
+}
+
+async function fetchWWR() {
+  const feeds = [
+    'https://weworkremotely.com/categories/remote-design-jobs.rss',
+    'https://weworkremotely.com/categories/remote-writing-jobs.rss',
+    'https://weworkremotely.com/categories/remote-marketing-jobs.rss',
+    'https://weworkremotely.com/categories/remote-virtual-assistant-jobs.rss'
+  ];
+  const all = [];
+  for (const f of feeds) { try { all.push(...parseRSS(await proxyFetch(f,true),'wwr')); } catch(e){} }
+  return dedupe(all);
+}
+
+async function fetchRemoteCo() {
+  const feeds = [
+    'https://remote.co/remote-jobs/feed/',
+    'https://remote.co/remote-jobs/write/feed/',
+    'https://remote.co/remote-jobs/data-entry/feed/'
+  ];
+  const all = [];
+  for (const f of feeds) { try { all.push(...parseRSS(await proxyFetch(f,true),'remoteco')); } catch(e){} }
+  return dedupe(all);
+}
+
+async function fetchRemoteOKRoles() {
+  const feeds = [
+    {u:'https://remoteok.com/remote-virtual-assistant-jobs.rss',p:'rok-va'},
+    {u:'https://remoteok.com/remote-copywriter-jobs.rss',p:'rok-cp'},
+    {u:'https://remoteok.com/remote-graphic-designer-jobs.rss',p:'rok-gd'},
+    {u:'https://remoteok.com/remote-video-editor-jobs.rss',p:'rok-ve'},
+    {u:'https://remoteok.com/remote-social-media-manager-jobs.rss',p:'rok-sm'},
+    {u:'https://remoteok.com/remote-data-entry-jobs.rss',p:'rok-de'}
+  ];
+  const all = [];
+  for (const f of feeds) { try { all.push(...parseRSS(await proxyFetch(f.u,true),f.p)); } catch(e){} }
+  return dedupe(all);
+}
+
+async function fetchUpwork() {
+  const roles = currentRoles.map(r=>r.trim()).filter(r=>r.length>3&&!['va ','administrative'].includes(r)).slice(0,8);
+  const all = [];
+  for (const role of roles) {
+    try {
+      const xml = await proxyFetch('https://www.upwork.com/ab/feed/jobs/rss?q='+encodeURIComponent(role)+'&sort=recency&paging=0;20', true);
+      all.push(...parseRSS(xml, 'upwork'));
+      await sleep(400);
+    } catch(e) {}
+  }
+  return dedupe(all);
+}
+
+async function fetchJobicy() {
+  const industries = ['design-multimedia','copywriting','marketing','smm','admin-support','supporting','data-science'];
+  const all = [];
+  for (const slug of industries) {
+    try {
+      const data = await proxyFetch('https://jobicy.com/api/v2/remote-jobs?count=50&industry='+slug);
+      (data.jobs||[]).forEach(j => {
+        let salary = '';
+        if (j.salaryMin && j.salaryCurrency) salary = j.salaryCurrency+' '+j.salaryMin+(j.salaryMax?'–'+j.salaryMax:'+');
+        all.push({
+          id:'jobicy-'+j.id, title:j.jobTitle||'Unknown',
+          description:stripHtml(j.jobDescription||j.jobExcerpt||'').slice(0,600),
+          company:j.companyName||'Unknown', url:j.url||'https://jobicy.com',
+          postedAt:j.pubDate?new Date(j.pubDate).getTime():Date.now(),
+          tags:[j.jobIndustry||'',j.jobType||''].filter(Boolean), salary
+        });
+      });
+      await sleep(400);
+    } catch(e) {}
+  }
+  return dedupe(all);
+}
+
+async function fetchHimalayas() {
+  try {
+    const data = await proxyFetch('https://himalayas.app/jobs/api?limit=20');
+    const raw = Array.isArray(data) ? data : (data.jobs||[]);
+    if (raw.length) return raw.map(j => ({
+      id:'himalayas-'+(j.id||j.slug||Math.random().toString(36).slice(2)),
+      title:j.title||j.jobTitle||'Unknown',
+      description:stripHtml(j.description||j.jobDescription||'').slice(0,600),
+      company:j.companyName||(j.company&&j.company.name)||'Unknown',
+      url:j.url||j.applicationUrl||'https://himalayas.app/jobs',
+      postedAt:new Date(j.pubDate||j.createdAt||j.publishedAt||Date.now()).getTime(),
+      tags:j.categories||j.tags||[], salary:j.salary||''
+    }));
+  } catch(e) {}
+  // RSS fallback
+  try {
+    return parseRSS(await proxyFetch('https://himalayas.app/jobs/rss',true),'himalayas-rss');
+  } catch(e) { return []; }
+}
+
+// ═══════════════════════════════════════════════════════════
+// MAIN SCAN — mirrors extension scanAllSources exactly
+// ═══════════════════════════════════════════════════════════
+
+const SOURCES = [
+  {id:'remoteok-api', name:'RemoteOK API',         fn:fetchRemoteOK},
+  {id:'remotive',     name:'Remotive API',          fn:fetchRemotive},
+  {id:'wwr',          name:'We Work Remotely',      fn:fetchWWR},
+  {id:'remoteco',     name:'Remote.co',             fn:fetchRemoteCo},
+  {id:'remoteok-rss', name:'RemoteOK (role feeds)', fn:fetchRemoteOKRoles},
+  {id:'upwork',       name:'Upwork',                fn:fetchUpwork},
+  {id:'jobicy',       name:'Jobicy API',            fn:fetchJobicy},
+  {id:'himalayas',    name:'Himalayas API',         fn:fetchHimalayas}
+];
+
+async function runScan() {
+  if (scanning) return;
+  scanning = true;
+
+  const btn = document.getElementById('btn-scan');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Scanning...';
+  showStatus('info', '<span class="spinner"></span> Scanning 8 sources — please wait...');
+
+  // Build source report
+  const report = document.getElementById('source-report');
+  report.style.display = 'block';
+  report.innerHTML = '<div class="src-header">Scan in progress...</div><div class="src-grid" id="src-grid">' +
+    SOURCES.map(s => '<div class="src-card pending" id="src-' + s.id + '"><div class="src-name">' + s.name +
+      '</div><div class="src-stat"><span class="spinner" style="width:8px;height:8px;border-width:1px"></span> Fetching...</div></div>'
+    ).join('') + '</div>';
+
+  const allMatched = [];
+  let totalRaw = 0, totalMatched = 0;
+
+  for (const src of SOURCES) {
+    const card = document.getElementById('src-' + src.id);
+    try {
+      const jobs = await src.fn();
+      totalRaw += jobs.length;
+      const matched = jobs.filter(isRoleMatch).map(j => ({
+        ...j, matchScore: calcScore(j), currency: detectCur(j), sourceName: src.name
+      }));
+      totalMatched += matched.length;
+      allMatched.push(...matched);
+      card.className = 'src-card ok';
+      card.querySelector('.src-stat').innerHTML =
+        jobs.length + ' fetched &rarr; <strong>' + matched.length + ' matched</strong>';
+    } catch(e) {
+      card.className = 'src-card err';
+      card.querySelector('.src-stat').innerHTML = '<span class="red">❌ ' + e.message.slice(0,40) + '</span>';
+    }
+  }
+
+  const newCount = storeNewJobs(allMatched);
+  store('lastScan', Date.now());
+  report.querySelector('.src-header').textContent =
+    'Scan complete · ' + totalRaw + ' fetched · ' + totalMatched + ' role matches · ' + newCount + ' new stored';
+
+  if (newCount > 0) {
+    showStatus('success', '✅ Found ' + newCount + ' new job' + (newCount > 1 ? 's' : '') + '! Scroll down to see them.');
+    setTimeout(hideStatus, 8000);
+  } else if (totalMatched > 0) {
+    showStatus('warning', 'ℹ️ ' + totalMatched + ' matching jobs found — all already seen. Tap 📋 View History to browse them, or 🔄 Reset & Rescan to start fresh.');
+    setTimeout(hideStatus, 10000);
+  } else {
+    showStatus('warning', '⚠️ No matching jobs found right now. Try again in a few minutes.');
+    setTimeout(hideStatus, 8000);
+  }
+
+  renderJobs();
+  updateStats();
+  updateHistBadge();
+  buildCurrencyDropdowns();
+  btn.innerHTML = '🔍 Scan Now';
+  scanning = false;
+}
+
+// Auto-scan every 15 minutes (mirrors extension alarm)
+setInterval(() => { if (!scanning) runScan(); }, 15 * 60 * 1000);
+
+// ═══════════════════════════════════════════════════════════
+// RENDER JOBS — main table (lastScanNewIds only)
+// ═══════════════════════════════════════════════════════════
+
+function renderJobs() {
+  const list = document.getElementById('job-list');
+  const lastIds = load('lastScanNewIds', null);
+  let jobs = applyRoleFilter(getDisplayJobs(), roleFilter);
+
+  // Role count label
+  const countEl = document.getElementById('role-count');
+  if (countEl) {
+    const base = getDisplayJobs();
+    countEl.textContent = roleFilter !== 'all' && base.length
+      ? jobs.length + ' of ' + base.length + ' match "' + roleFilter + '"'
+      : '';
+  }
+
+  if (curFilter !== 'all') jobs = jobs.filter(j => j.currency === curFilter);
+  if (searchQ) { const q = searchQ.toLowerCase(); jobs = jobs.filter(j => j.title.toLowerCase().includes(q) || (j.company||'').toLowerCase().includes(q)); }
+  if (sortBy === 'score')  jobs.sort((a,b) => b.matchScore - a.matchScore);
+  if (sortBy === 'time')   jobs.sort((a,b) => b.postedAt - a.postedAt);
+  if (sortBy === 'source') jobs.sort((a,b) => (a.sourceName||'').localeCompare(b.sourceName||''));
+  if (sortBy === 'title')  jobs.sort((a,b) => a.title.localeCompare(b.title));
+
+  // Dedupe by URL
+  const seenU = new Set();
+  jobs = jobs.filter(j => { if (!j.url || seenU.has(j.url)) return false; seenU.add(j.url); return true; });
+
+  if (!jobs.length) {
+    const hasHist = load('historyIds',[]).length > 0;
+    const noNew = lastIds !== null && lastIds.length === 0 && load('lastScan', null);
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">' + (noNew ? '📋' : '🔍') + '</div>' +
+      '<div class="empty-title">' + (noNew ? 'No New Jobs This Scan' : 'No Jobs Yet') + '</div>' +
+      '<div class="empty-sub">' + (noNew
+        ? 'All matching jobs were already shown. Tap 📋 View History to see them, or 🔄 Reset &amp; Rescan to start fresh.'
+        : 'Tap <strong>Scan Now</strong> to search 8 job boards.' + (hasHist ? '<br/>Tap 📋 View History for previously shown jobs.' : ''))
+      + '</div></div>';
+    return;
+  }
+
+  const top3 = jobs.slice(0,3).map(j=>j.id);
+  list.innerHTML = jobs.map((j,i) => {
+    const isTop = top3.includes(j.id);
+    const crown = i===0?'👑 ':i<3?'⭐ ':'';
+    const sc = j.matchScore>=60?'b-hi':j.matchScore>=30?'b-mid':'b-lo';
+    return '<div class="job-card' + (isTop?' top':'') + '">' +
+      '<div class="job-title-txt">' + crown + esc(j.title) + '</div>' +
+      '<div class="job-co">' + esc(j.company||'Unknown') + ' · ' + timeAgo(j.postedAt) + '</div>' +
+      '<div class="job-desc">' + esc((j.description||'No description').slice(0,120)) + '...</div>' +
+      '<div class="job-meta">' +
+        '<span class="badge ' + sc + '">' + j.matchScore + '% match</span>' +
+        '<span class="badge b-cur">' + esc(j.currency) + '</span>' +
+        '<span class="badge b-src">' + esc(j.sourceName||'—') + '</span>' +
+        (j.salary ? '<span class="badge b-cur">' + esc(j.salary) + '</span>' : '') +
+      '</div>' +
+      '<div class="job-actions">' +
+        '<a class="btn btn-blue btn-sm" href="' + esc(j.url) + '" target="_blank" rel="noopener">Apply →</a>' +
+        '<button class="btn btn-gray btn-sm track-btn" data-jid="' + esc(j.id) + '">+ Track</button>' +
+      '</div></div>';
+  }).join('');
+
+  list.querySelectorAll('.track-btn').forEach(btn => {
+    btn.addEventListener('click', () => trackJobFromList(btn.dataset.jid, getDisplayJobs()));
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER HISTORY
+// ═══════════════════════════════════════════════════════════
+
+function renderHistory() {
+  const list = document.getElementById('history-list');
+  let jobs = applyRoleFilter(getHistoryJobs(), hRole);
+
+  if (hCur !== 'all') jobs = jobs.filter(j => j.currency === hCur);
+  if (hSearch) { const q = hSearch.toLowerCase(); jobs = jobs.filter(j => j.title.toLowerCase().includes(q) || (j.company||'').toLowerCase().includes(q)); }
+  if (hSort === 'score') jobs.sort((a,b) => b.matchScore - a.matchScore);
+  if (hSort === 'time')  jobs.sort((a,b) => b.postedAt - a.postedAt);
+  if (hSort === 'title') jobs.sort((a,b) => a.title.localeCompare(b.title));
+
+  const seenU = new Set();
+  jobs = jobs.filter(j => { if (!j.url || seenU.has(j.url)) return false; seenU.add(j.url); return true; });
+
+  const total = getHistoryJobs().length;
+  if (!jobs.length) {
+    list.innerHTML = '<div class="empty-state" style="padding:30px 20px"><div class="empty-icon">📋</div>' +
+      '<div class="empty-title">' + (total===0 ? 'No History Yet' : 'No Results') + '</div>' +
+      '<div class="empty-sub">' + (total===0 ? 'Jobs from previous scans appear here after your second scan.' : 'Try adjusting the filters above.') + '</div></div>';
+    return;
+  }
+
+  list.innerHTML = jobs.map((j,i) => {
+    const crown = i===0?'👑 ':i<3?'⭐ ':'';
+    const sc = j.matchScore>=60?'b-hi':j.matchScore>=30?'b-mid':'b-lo';
+    return '<div class="job-card">' +
+      '<div class="job-title-txt">' + crown + esc(j.title) + '</div>' +
+      '<div class="job-co">' + esc(j.company||'Unknown') + ' · ' + timeAgo(j.postedAt) + '</div>' +
+      '<div class="job-desc">' + esc((j.description||'').slice(0,120)) + '...</div>' +
+      '<div class="job-meta">' +
+        '<span class="badge ' + sc + '">' + j.matchScore + '% match</span>' +
+        '<span class="badge b-cur">' + esc(j.currency) + '</span>' +
+        '<span class="badge b-src">' + esc(j.sourceName||'—') + '</span>' +
+        (j.salary ? '<span class="badge b-cur">' + esc(j.salary) + '</span>' : '') +
+      '</div>' +
+      '<div class="job-actions">' +
+        '<a class="btn btn-blue btn-sm" href="' + esc(j.url) + '" target="_blank" rel="noopener">Apply →</a>' +
+        '<button class="btn btn-gray btn-sm h-track-btn" data-jid="' + esc(j.id) + '">+ Track</button>' +
+      '</div></div>';
+  }).join('');
+
+  list.querySelectorAll('.h-track-btn').forEach(btn => {
+    btn.addEventListener('click', () => trackJobFromList(btn.dataset.jid, getHistoryJobs()));
+  });
+}
+
+function updateHistBadge() {
+  const badge = document.getElementById('hist-badge');
+  if (badge) badge.textContent = getHistoryJobs().length;
+}
+
+// ═══════════════════════════════════════════════════════════
+// EDIT JOB TYPES — identical to extension
+// ═══════════════════════════════════════════════════════════
+
+function renderRolesGrid() {
+  const grid = document.getElementById('roles-grid');
+  if (!grid) return;
+  if (!currentRoles.length) {
+    grid.innerHTML = '<span style="color:var(--text3);font-size:12px">No roles set — add some below.</span>';
+    return;
+  }
+  grid.innerHTML = currentRoles.map((r,i) =>
+    '<span class="role-tag">' + esc(r) +
+    '<span class="role-rm" data-i="' + i + '">✕</span></span>'
+  ).join('');
+  grid.querySelectorAll('.role-rm').forEach(btn => {
+    btn.addEventListener('click', () => { currentRoles.splice(parseInt(btn.dataset.i),1); renderRolesGrid(); });
+  });
+}
+
+function syncRoleDropdowns() {
+  const opts = '<option value="all">All Roles</option>' +
+    currentRoles.filter(r => r.trim().length > 2).map(r =>
+      '<option value="' + esc(r) + '">' + esc(r.charAt(0).toUpperCase()+r.slice(1)) + '</option>'
+    ).join('');
+  ['role-filter','h-role-filter'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const cur = el.value;
+    el.innerHTML = opts;
+    if ([...el.options].some(o => o.value === cur)) el.value = cur; else el.value = 'all';
+  });
+  roleFilter = document.getElementById('role-filter')?.value || 'all';
+  hRole = document.getElementById('h-role-filter')?.value || 'all';
+}
+
+function saveRoles() {
+  if (!currentRoles.length) { alert('Add at least one job type before saving.'); return; }
+  store('customRoles', currentRoles);
+  syncRoleDropdowns();
+  renderJobs();
+  if (historyOpen) renderHistory();
+  const st = document.getElementById('save-status-msg');
+  if (st) { st.textContent = '✅ Saved! Takes effect on next scan.'; st.style.display = 'inline'; setTimeout(() => { st.style.display='none'; }, 4000); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// STATUS HELPERS
+// ═══════════════════════════════════════════════════════════
+
+function showStatus(type, html) {
+  const el = document.getElementById('scan-status-bar');
+  const map = {
+    info:    {bg:'#1e3a5f',co:'#93c5fd',bd:'#1e40af'},
+    success: {bg:'#064e3b',co:'#34d399',bd:'#065f46'},
+    warning: {bg:'#78350f',co:'#fbd38d',bd:'#92400e'},
+    error:   {bg:'#7f1d1d',co:'#fca5a5',bd:'#991b1b'}
+  };
+  const s = map[type] || map.info;
+  el.style.cssText = 'display:block;padding:10px 14px;border-radius:10px;margin-bottom:12px;font-size:12px;font-weight:500;line-height:1.5;background:'+s.bg+';color:'+s.co+';border:1px solid '+s.bd;
+  el.innerHTML = html;
+}
+
+function hideStatus() {
+  const el = document.getElementById('scan-status-bar');
+  if (el) el.style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════════════════
+
+function updateStats() {
+  const display = getDisplayJobs();
+  document.getElementById('stat-jobs').textContent = display.length;
+  const lastScan = load('lastScan', null);
+  document.getElementById('stat-time').textContent = lastScan ? timeAgo(lastScan) : 'Never';
+  if (display.length > 0) {
+    const top = [...display].sort((a,b) => b.matchScore - a.matchScore)[0];
+    document.getElementById('stat-score').textContent = top.matchScore + '%';
+  }
+  updateHistBadge();
+}
+
+// ═══════════════════════════════════════════════════════════
+// TRACKER
+// ═══════════════════════════════════════════════════════════
+
+function renderTracker() {
+  const list = document.getElementById('tracker-list');
+  const stats = {total:trackerData.length, applied:0, interview:0, offer:0, rejected:0};
+  trackerData.forEach(e => { if (stats[e.status]!==undefined) stats[e.status]++; });
+  ['total','applied','interview','offer','rejected'].forEach(k => {
+    const el = document.getElementById('ts-'+k);
+    if (el) el.textContent = stats[k]||0;
+  });
+
+  if (!trackerData.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">No Applications Yet</div><div class="empty-sub">Tap <strong>Add Application</strong> to start tracking.</div></div>';
+    return;
+  }
+
+  list.innerHTML = trackerData.map(e => {
+    const sc = parseInt(e.score)||0;
+    const scC = sc>=60?'b-hi':sc>=30?'b-mid':'b-lo';
+    const date = e.date ? new Date(e.date).toLocaleDateString() : '—';
+    return '<div class="tracker-card">' +
+      '<div class="tracker-head">' +
+        '<div><div class="tracker-title">' + esc(e.title||'Unknown') + '</div>' +
+        '<div class="tracker-co">' + esc(e.co||'Unknown') + ' · ' + date + '</div></div>' +
+        '<button class="btn btn-red btn-sm del-trk" data-id="' + esc(e.id) + '">🗑️</button>' +
+      '</div>' +
+      '<div class="tracker-meta">' +
+        '<span class="badge ' + scC + '">' + sc + '%</span>' +
+        '<select class="status-sel st-' + e.status + ' trk-status" data-id="' + esc(e.id) + '">' +
+          '<option value="applied"' + (e.status==='applied'?' selected':'') + '>Applied</option>' +
+          '<option value="interview"' + (e.status==='interview'?' selected':'') + '>Interview</option>' +
+          '<option value="offer"' + (e.status==='offer'?' selected':'') + '>Offer 🎉</option>' +
+          '<option value="rejected"' + (e.status==='rejected'?' selected':'') + '>Rejected</option>' +
+        '</select>' +
+        (e.link ? '<a href="' + esc(e.link) + '" target="_blank" class="btn btn-gray btn-sm">View Job →</a>' : '') +
+      '</div>' +
+      (e.notes ? '<div style="font-size:11px;color:var(--text2);margin-top:4px">' + esc(e.notes) + '</div>' : '') +
+    '</div>';
+  }).join('');
+
+  // Event delegation — no inline handlers
+  list.querySelectorAll('.del-trk').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (confirm('Delete this application?')) {
+        trackerData = trackerData.filter(e => e.id !== btn.dataset.id);
+        store('tracker', trackerData);
+        renderTracker();
+      }
+    });
+  });
+}
+
+document.getElementById('tracker-list').addEventListener('change', e => {
+  if (e.target.classList.contains('trk-status')) {
+    const entry = trackerData.find(t => t.id === e.target.dataset.id);
+    if (entry) {
+      entry.status = e.target.value;
+      e.target.className = 'status-sel st-' + e.target.value + ' trk-status';
+      store('tracker', trackerData);
+      // Update stats without full re-render
+      const stats = {total:trackerData.length, applied:0, interview:0, offer:0, rejected:0};
+      trackerData.forEach(t => { if (stats[t.status]!==undefined) stats[t.status]++; });
+      ['total','applied','interview','offer','rejected'].forEach(k => {
+        const el = document.getElementById('ts-'+k);
+        if (el) el.textContent = stats[k]||0;
+      });
+    }
+  }
+});
+
+function trackJobFromList(id, pool) {
+  const job = pool.find(j => j.id === id);
+  if (!job) return;
+  const entry = {id:'tr-'+Date.now(), title:job.title, co:job.company||'Unknown',
+    link:job.url, score:job.matchScore, status:'applied', notes:'', date:new Date().toISOString()};
+  trackerData.unshift(entry);
+  store('tracker', trackerData);
+  renderTracker();
+  showStatus('success', '✅ "' + job.title.slice(0,35) + '" added to Tracker!');
+  setTimeout(hideStatus, 4000);
+}
+
+// ═══════════════════════════════════════════════════════════
+// RESUME GENERATOR — identical to extension resume.js
+// ═══════════════════════════════════════════════════════════
+
+// Parse a CSV string into array of objects using first row as headers
+function parseCSV(text) {
+  const lines = text.trim().split(/\r?\n/);
+  if (lines.length < 2) return [];
+  // Handle quoted fields properly
+  function splitCSVLine(line) {
+    const result = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQ = !inQ; continue; }
+      if (c === ',' && !inQ) { result.push(cur.trim()); cur = ''; continue; }
+      cur += c;
+    }
+    result.push(cur.trim());
+    return result;
+  }
+  const headers = splitCSVLine(lines[0]);
+  return lines.slice(1).filter(l => l.trim()).map(line => {
+    const vals = splitCSVLine(line);
+    const obj = {};
+    headers.forEach((h, i) => { obj[h.trim()] = (vals[i]||'').trim(); });
+    return obj;
+  });
+}
+
+// Universal file reader — handles both CSV (LinkedIn export) and JSON
+async function readFile(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = e => {
+      const text = e.target.result;
+      const name = file.name.toLowerCase();
+      if (name.endsWith('.json')) {
+        try { res(JSON.parse(text)); } catch(err) { rej(new Error('Invalid JSON: ' + err.message)); }
+      } else {
+        // CSV — return parsed array
+        try { res(parseCSV(text)); } catch(err) { rej(new Error('CSV parse error: ' + err.message)); }
+      }
+    };
+    r.onerror = () => rej(new Error('Could not read file'));
+    r.readAsText(file);
+  });
+}
+
+function getDemoProfile() {
+  return {
+    basics:    {firstName:'Your',lastName:'Name',emailAddress:'your@email.com',summary:'Dedicated remote professional with a passion for delivering quality work.'},
+    positions: [{title:'Virtual Assistant',company:'Freelance',description:'Managed email, scheduling, data entry, and client communications remotely.',startDate:'2022-01',endDate:'Present'}],
+    skills:    ['Microsoft Office','Google Workspace','Data Entry','Communication','Canva','Social Media','Content Writing'],
+    education: [{school:'Your University',degree:'Bachelor',field:'Business Administration',startDate:'2018',endDate:'2022'}]
+  };
+}
+
+function extractCLReqs(jd) {
+  const kws = ['attention to detail','communication','time management','organized',
+    'data entry','microsoft office','google workspace','canva','photoshop',
+    'social media management','content creation','copywriting','video editing',
+    'photo editing','transcription','scheduling','customer service',
+    'email management','research','SEO','administrative support'];
+  const found = kws.filter(k => jd.toLowerCase().includes(k.toLowerCase()));
+  return found.length ? found.slice(0,4) : ['excellent communication','remote work proficiency','attention to detail'];
+}
+
+// ═══════════════════════════════════════════════════════════
+// ALL EVENT LISTENERS — null-safe, wrapped in window.load
+// ═══════════════════════════════════════════════════════════
+
+// Helper: safely attach event listener — never crashes if element missing
+function on(id, evt, fn) {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener(evt, fn);
+}
+function onAll(selector, evt, fn) {
+  document.querySelectorAll(selector).forEach(el => el.addEventListener(evt, fn));
+}
+
+function attachAllListeners() {
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const pg = document.getElementById('page-' + btn.dataset.tab);
+      if (pg) pg.classList.add('active');
+    });
+  });
+
+  // Scan
+  on('btn-scan',  'click', runScan);
+
+  // Reset & Rescan
+  on('btn-reset', 'click', () => {
+    if (confirm('Reset & Rescan?\n\nClears current jobs, history, and seen IDs so everything shows fresh.\n\nYour Tracker (applied jobs) will NOT be affected.')) {
+      allJobs = []; seenIds = [];
+      store('jobs',[]); store('seenIds',[]); store('historyIds',[]);
+      store('lastScanNewIds',[]); store('lastScan',null);
+      const sr = document.getElementById('source-report');
+      if (sr) sr.style.display = 'none';
+      historyOpen = false;
+      const hp = document.getElementById('history-panel');
+      if (hp) hp.style.display = 'none';
+      const bh = document.getElementById('btn-history');
+      if (bh) bh.classList.remove('open');
+      renderJobs(); renderHistory(); updateStats();
+      showStatus('success', '✅ Fully reset! Tap Scan Now for fresh results.');
+      setTimeout(hideStatus, 5000);
+    }
+  });
+
+  // Edit Job Types
+  on('btn-edit-roles', 'click', () => {
+    editOpen = !editOpen;
+    const panel = document.getElementById('edit-roles-panel');
+    const btn   = document.getElementById('btn-edit-roles');
+    if (panel) panel.style.display = editOpen ? 'block' : 'none';
+    if (btn)   btn.classList.toggle('open', editOpen);
+    if (editOpen) {
+      currentRoles = load('customRoles', null) || [...DEFAULT_ROLES];
+      renderRolesGrid();
+      if (panel) panel.scrollIntoView({behavior:'smooth'});
+    }
+  });
+  on('btn-close-edit', 'click', () => {
+    editOpen = false;
+    const panel = document.getElementById('edit-roles-panel');
+    const btn   = document.getElementById('btn-edit-roles');
+    if (panel) panel.style.display = 'none';
+    if (btn)   btn.classList.remove('open');
+  });
+  on('btn-add-role', 'click', () => {
+    const input = document.getElementById('new-role-input');
+    if (!input) return;
+    const val = input.value.trim().toLowerCase();
+    if (!val) return;
+    if (currentRoles.includes(val)) {
+      input.style.borderColor = 'var(--red)';
+      setTimeout(() => { input.style.borderColor = ''; }, 1500);
+      return;
+    }
+    currentRoles.push(val);
+    renderRolesGrid();
+    input.value = '';
+    input.focus();
+  });
+  on('new-role-input', 'keydown', e => {
+    if (e.key === 'Enter') { const b = document.getElementById('btn-add-role'); if(b) b.click(); }
+  });
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const role = chip.textContent.trim().toLowerCase();
+      if (!currentRoles.includes(role)) { currentRoles.push(role); renderRolesGrid(); }
+    });
+  });
+  on('btn-save-roles',  'click', saveRoles);
+  on('btn-reset-roles', 'click', () => {
+    if (confirm('Restore default job types? This replaces your custom list with the original built-in roles.')) {
+      currentRoles = [...DEFAULT_ROLES];
+      renderRolesGrid();
+      saveRoles();
+    }
+  });
+
+  // View History
+  on('btn-history', 'click', () => {
+    historyOpen = !historyOpen;
+    const panel = document.getElementById('history-panel');
+    const btn   = document.getElementById('btn-history');
+    if (panel) panel.style.display = historyOpen ? 'block' : 'none';
+    if (btn)   btn.classList.toggle('open', historyOpen);
+    if (historyOpen) { renderHistory(); if(panel) panel.scrollIntoView({behavior:'smooth'}); }
+  });
+  on('btn-close-hist', 'click', () => {
+    historyOpen = false;
+    const panel = document.getElementById('history-panel');
+    const btn   = document.getElementById('btn-history');
+    if (panel) panel.style.display = 'none';
+    if (btn)   btn.classList.remove('open');
+  });
+
+  // Role filters — synced between main + history
+  on('role-filter', 'change', e => {
+    roleFilter = e.target.value;
+    const h = document.getElementById('h-role-filter');
+    if (h) { h.value = roleFilter; hRole = roleFilter; }
+    renderJobs();
+    if (historyOpen) renderHistory();
+  });
+  on('h-role-filter', 'change', e => {
+    hRole = e.target.value;
+    const m = document.getElementById('role-filter');
+    if (m) { m.value = hRole; roleFilter = hRole; }
+    renderHistory(); renderJobs();
+  });
+
+  // Main filters
+  on('sort-sel',   'change', e => { sortBy    = e.target.value; renderJobs(); });
+  on('cur-filter', 'change', e => { curFilter = e.target.value; renderJobs(); });
+  on('search-q',   'input',  e => { searchQ   = e.target.value.trim(); renderJobs(); });
+
+  // History filters
+  on('h-sort',   'change', e => { hSort   = e.target.value; renderHistory(); });
+  on('h-cur',    'change', e => { hCur    = e.target.value; renderHistory(); });
+  on('h-search', 'input',  e => { hSearch = e.target.value.trim(); renderHistory(); });
+
+  // Tracker — status change via event delegation
+  const tlist = document.getElementById('tracker-list');
+  if (tlist) {
+    tlist.addEventListener('change', e => {
+      if (e.target.classList.contains('trk-status')) {
+        const entry = trackerData.find(t => t.id === e.target.dataset.id);
+        if (entry) {
+          entry.status = e.target.value;
+          e.target.className = 'status-sel st-' + e.target.value + ' trk-status';
+          store('tracker', trackerData);
+          const stats = {total:trackerData.length, applied:0, interview:0, offer:0, rejected:0};
+          trackerData.forEach(t => { if (stats[t.status]!==undefined) stats[t.status]++; });
+          ['total','applied','interview','offer','rejected'].forEach(k => {
+            const el = document.getElementById('ts-'+k);
+            if (el) el.textContent = stats[k]||0;
+          });
+        }
+      }
+    });
+  }
+
+  on('btn-add-app', 'click', () => {
+    const form = document.getElementById('add-app-form');
+    if (!form) return;
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    const td = document.getElementById('t-date');
+    if (td) td.value = new Date().toISOString().split('T')[0];
+  });
+  on('btn-cancel-app', 'click', () => {
+    const form = document.getElementById('add-app-form');
+    if (form) form.style.display = 'none';
+  });
+  on('btn-save-app', 'click', () => {
+    const titleEl = document.getElementById('t-title');
+    const coEl    = document.getElementById('t-company');
+    const title = titleEl ? titleEl.value.trim() : '';
+    const co    = coEl    ? coEl.value.trim()    : '';
+    if (!title || !co) { alert('Job Title and Company are required.'); return; }
+    const entry = {
+      id:'tr-'+Date.now(), title, co,
+      date:  document.getElementById('t-date')   ? document.getElementById('t-date').value   : new Date().toISOString(),
+      link:  document.getElementById('t-link')   ? document.getElementById('t-link').value.trim()   : '',
+      score: document.getElementById('t-score')  ? document.getElementById('t-score').value  : '0',
+      status:document.getElementById('t-status') ? document.getElementById('t-status').value : 'applied',
+      notes: document.getElementById('t-notes')  ? document.getElementById('t-notes').value.trim()  : ''
+    };
+    trackerData.unshift(entry);
+    store('tracker', trackerData);
+    renderTracker();
+    const form = document.getElementById('add-app-form');
+    if (form) form.style.display = 'none';
+    ['t-title','t-company','t-link','t-score','t-notes'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    alert('✅ "' + title + '" added to tracker!');
+  });
+
+  on('btn-dl-csv', 'click', () => {
+    if (!trackerData.length) { alert('No applications to export.'); return; }
+    const rows = [['Job Title','Company','Date Applied','Match Score','Status','Link','Notes'],
+      ...trackerData.map(e => [e.title,e.co,e.date?new Date(e.date).toLocaleDateString():'',e.score+'%',e.status,e.link||'',e.notes||''])
+    ].map(r => r.map(c => '"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([rows],{type:'text/csv'}));
+    a.download = 'job-applications-' + new Date().toISOString().split('T')[0] + '.csv';
+    a.click();
+  });
+
+  on('btn-clear-tracker', 'click', () => {
+    if (confirm('Clear ALL application records? This cannot be undone.')) {
+      trackerData = []; store('tracker',[]); renderTracker();
+    }
+  });
+
+  // Apply page
+  const cl = document.getElementById('checklist');
+  if (cl) {
+    cl.addEventListener('change', e => {
+      if (e.target.type === 'checkbox') e.target.parentElement.classList.toggle('done', e.target.checked);
+    });
+  }
+  on('btn-a-track', 'click', () => {
+    const titleEl = document.getElementById('a-title');
+    const coEl    = document.getElementById('a-company');
+    const title = titleEl ? titleEl.value.trim() : '';
+    const co    = coEl    ? coEl.value.trim()    : '';
+    if (!title || !co) { alert('Please enter a Job Title and Company.'); return; }
+    const entry = {
+      id:'tr-'+Date.now(), title, co,
+      link:  document.getElementById('a-url')   ? document.getElementById('a-url').value.trim()  : '',
+      score: document.getElementById('a-score') ? document.getElementById('a-score').value        : '0',
+      status:'applied', notes:'', date:new Date().toISOString()
+    };
+    trackerData.unshift(entry);
+    store('tracker', trackerData);
+    renderTracker();
+    const st = document.getElementById('a-status');
+    if (st) { st.textContent = '✅ "' + title + '" added to Tracker!'; st.style.display = 'block'; setTimeout(() => { st.style.display='none'; }, 4000); }
+  });
+
+  // Resume generator
+  on('btn-gen-resume', 'click', async () => {
+    const jdEl = document.getElementById('r-jobdesc');
+    const jobDesc = jdEl ? jdEl.value.trim() : '';
+    if (!jobDesc) { alert('Please paste a job description first.'); return; }
+
+    const files = {
+      profile:   document.getElementById('r-profile')   ? document.getElementById('r-profile').files[0]   : null,
+      positions: document.getElementById('r-positions') ? document.getElementById('r-positions').files[0] : null,
+      skills:    document.getElementById('r-skills')   ? document.getElementById('r-skills').files[0]   : null,
+      education: document.getElementById('r-education') ? document.getElementById('r-education').files[0] : null
+    };
+    const hasFiles = Object.values(files).some(f => f);
+    let profile = hasFiles ? {} : getDemoProfile();
+
+    if (hasFiles) {
+      if (files.profile) {
+        try {
+          const raw = await readFile(files.profile);
+          const row = Array.isArray(raw) ? (raw[0]||{}) : raw;
+          profile.basics = {
+            firstName:    row['First Name']    || row.firstName    || row.first_name    || '',
+            lastName:     row['Last Name']     || row.lastName     || row.last_name     || '',
+            emailAddress: row['Email Address'] || row.emailAddress || row.email         || '',
+            summary:      row['Summary']       || row.summary      || '',
+            location:     row['Geo Location']  || row.location     || row['Zip Code']   || ''
+          };
+        } catch(e) {}
+      }
+      if (files.positions) {
+        try {
+          const raw = await readFile(files.positions);
+          const arr = Array.isArray(raw) ? raw : (raw.positions||raw.Positions||[raw]);
+          profile.positions = arr.filter(p => p['Company Name']||p.Company||p.company_name||p.title||p.Title).map(p => ({
+            title:       p['Title']        || p.title        || p.Title        || 'Unknown',
+            company:     p['Company Name'] || p.company_name || p.companyName  || p.Company || 'Unknown',
+            description: p['Description'] || p.description  || '',
+            location:    p['Location']    || p.location      || '',
+            startDate:   p['Started On']  || p.started_on   || p.startDate    || p['Start Date'] || '',
+            endDate:     p['Finished On'] || p.finished_on  || p.endDate      || p['End Date']   || 'Present'
+          }));
+        } catch(e) {}
+      }
+      if (files.skills) {
+        try {
+          const raw = await readFile(files.skills);
+          const arr = Array.isArray(raw) ? raw : (raw.skills||raw.Skills||[]);
+          profile.skills = arr.map(s => typeof s==='string' ? s : (s['Name']||s.name||s.Name||s.skill||'')).filter(Boolean);
+        } catch(e) {}
+      }
+      if (files.education) {
+        try {
+          const raw = await readFile(files.education);
+          const arr = Array.isArray(raw) ? raw : (raw.education||raw.Education||[]);
+          profile.education = arr.filter(e => e['School Name']||e.school_name||e.School).map(e => ({
+            school:    e['School Name']  || e.school_name || e.schoolName  || e.School    || 'Unknown',
+            degree:    e['Degree Name']  || e.degree_name || e.degreeName  || e.Degree    || '',
+            field:     e['Field Of Study']||e['Notes']   || e.fieldOfStudy|| e['Field of Study'] || '',
+            startDate: e['Start Date']   || e.start_date  || e.startDate   || '',
+            endDate:   e['End Date']     || e.end_date    || e.endDate     || ''
+          }));
+        } catch(e) {}
+      }
+    }
+
+    const userSummaryEl = document.getElementById('r-summary');
+    const userSummary = userSummaryEl ? userSummaryEl.value.trim() : '';
+    const jd = jobDesc.toLowerCase();
+    const basics    = profile.basics    || {};
+    const positions = profile.positions || [];
+    const skills    = profile.skills    || ['Microsoft Office','Google Workspace','Communication','Data Entry','Canva'];
+    const education = profile.education || [];
+
+    let score = 0;
+    const matched = [];
+    skills.forEach(s => { if (jd.includes(s.toLowerCase())) { score += 5; matched.push(s); } });
+    ['remote','writing','editing','canva','social','data','admin','scheduling','excel','google','seo','content'].forEach(k => {
+      if (jd.includes(k)) { score += 1; matched.push(k); }
+    });
+    score = Math.min(100, score);
+
+    const firstName = basics['First Name'] || basics.firstName || 'Your';
+    const lastName  = basics['Last Name']  || basics.lastName  || 'Name';
+    const email     = basics['Email Address'] || basics.emailAddress || 'your@email.com';
+    const summary   = userSummary || basics['Summary'] || basics.summary || 'Dedicated remote professional with a passion for delivering quality work.';
+
+    const posText = positions.slice(0,5).map(p =>
+      p.title + ' — ' + p.company + '\n' + (p.startDate||'') + ' – ' + (p.endDate||'Present') + '\n' + (p.description||'').slice(0,300)
+    ).join('\n\n');
+
+    const eduText = education.map(e =>
+      (e.degree||'Degree') + ' in ' + (e.field||'Field') + ' — ' + e.school + '\n' + (e.startDate||'') + ' – ' + (e.endDate||'')
+    ).join('\n\n');
+
+    const resumeText =
+      (firstName + ' ' + lastName).trim().toUpperCase() + '\n' + email + '\n' +
+      'Match Score: ' + score + '%\n\n' +
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nPROFESSIONAL SUMMARY\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' + summary + '\n\n' +
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nWORK EXPERIENCE\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' + (posText||'No positions found.') + '\n\n' +
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nSKILLS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' + (skills.join(' · ')||'No skills found.') + '\n\n' +
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nEDUCATION\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' + (eduText||'No education found.');
+
+    const ro = document.getElementById('resume-output');
+    if (ro) ro.innerText = resumeText;
+    const sl = document.getElementById('r-score-label');
+    const sf = document.getElementById('r-score-fill');
+    const rt = document.getElementById('r-tags');
+    const rsc = document.getElementById('r-score-section');
+    const ros = document.getElementById('r-output-section');
+    if (sl) sl.textContent = score + '%';
+    if (sf) sf.style.width = score + '%';
+    if (rt) rt.innerHTML = matched.slice(0,20).map(s => '<span class="tag">'+esc(s)+'</span>').join('');
+    if (rsc) rsc.style.display = 'block';
+    if (ros) { ros.style.display = 'block'; ros.scrollIntoView({behavior:'smooth'}); }
+  });
+
+  on('btn-resume-pdf', 'click', () => {
+    const ro = document.getElementById('resume-output');
+    const content = ro ? ro.innerText : '';
+    const w = window.open('','_blank');
+    if (w) {
+      w.document.write('<html><head><title>Resume</title><style>body{font-family:Georgia,serif;font-size:13px;line-height:1.7;max-width:750px;margin:40px auto;color:#111;white-space:pre-wrap}</style></head><body>' + content.replace(/</g,'&lt;') + '</body></html>');
+      w.document.close(); setTimeout(() => w.print(), 500);
+    }
+  });
+  on('btn-resume-copy', 'click', () => {
+    const ro = document.getElementById('resume-output');
+    if (!ro) return;
+    navigator.clipboard.writeText(ro.innerText)
+      .then(() => alert('✅ Copied!'))
+      .catch(() => alert('Select the text manually and copy.'));
+  });
+
+  // Cover letter
+  on('btn-gen-cl', 'click', () => {
+    const nameEl    = document.getElementById('cl-name');
+    const roleEl    = document.getElementById('cl-role');
+    const companyEl = document.getElementById('cl-company');
+    const summaryEl = document.getElementById('cl-summary');
+    const jdEl      = document.getElementById('cl-jobdesc');
+    const name    = nameEl    ? nameEl.value.trim()    : 'Your Name';
+    const role    = roleEl    ? roleEl.value.trim()    : 'the advertised position';
+    const company = companyEl ? companyEl.value.trim() : 'your company';
+    const summary = summaryEl ? summaryEl.value.trim() : '';
+    const jobDesc = jdEl      ? jdEl.value.trim()      : '';
+    if (!jobDesc) { alert('Please paste a job description first.'); return; }
+
+    const reqs = extractCLReqs(jobDesc);
+    const today = new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+
+    const letter = name + '\n' + today + '\n\nHiring Manager\n' + company + '\n\nDear Hiring Manager,\n\n' +
+      'I am writing to express my strong interest in the ' + role + ' position at ' + company +
+      '. Having reviewed your job posting carefully, I am confident that my skills and background make me an excellent fit for this remote opportunity.\n\n' +
+      (summary || 'As a dedicated and detail-oriented remote professional, I bring a strong work ethic and a commitment to delivering high-quality results. I thrive in remote environments and am fully equipped with the tools and discipline required for remote work.') + '\n\n' +
+      'Your posting highlights the need for ' + reqs.join(', ') + ', and these align closely with my experience. I am particularly skilled in communication, time management, and adapting quickly to new platforms and workflows — qualities essential for success in this role at ' + company + '.\n\n' +
+      'I am enthusiastic about the opportunity to contribute to ' + company + "\u2019s team and would welcome the chance to discuss how my background can meet your needs. I am available immediately and fully committed to remote, flexible work.\n\n" +
+      'Thank you sincerely for your time and consideration. I look forward to hearing from you.\n\nWarm regards,\n' + name;
+
+    const clo = document.getElementById('cl-output');
+    const clos = document.getElementById('cl-output-section');
+    if (clo) clo.innerText = letter;
+    if (clos) { clos.style.display = 'block'; clos.scrollIntoView({behavior:'smooth'}); }
+  });
+  on('btn-cl-copy', 'click', () => {
+    const clo = document.getElementById('cl-output');
+    if (!clo) return;
+    navigator.clipboard.writeText(clo.innerText)
+      .then(() => alert('✅ Copied to clipboard!'))
+      .catch(() => alert('Select the text manually and copy.'));
+  });
+  on('btn-cl-print', 'click', () => {
+    const clo = document.getElementById('cl-output');
+    const content = clo ? clo.innerText : '';
+    const w = window.open('','_blank');
+    if (w) {
+      w.document.write('<html><head><title>Cover Letter</title><style>body{font-family:Georgia,serif;font-size:13px;line-height:1.8;max-width:700px;margin:40px auto;color:#111;white-space:pre-wrap}</style></head><body>' + content.replace(/</g,'&lt;') + '</body></html>');
+      w.document.close(); setTimeout(() => w.print(), 500);
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// UTILITIES
+
+// ═══════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════
+
+function stripHtml(h) {
+  return (h||'').replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+    .replace(/&gt;/g,'>').replace(/&nbsp;/g,' ').replace(/&#\d+;/g,' ').replace(/\s+/g,' ').trim();
+}
+function dedupe(arr) {
+  const seen = new Set();
+  return arr.filter(j => { if (seen.has(j.id)) return false; seen.add(j.id); return true; });
+}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function timeAgo(ts) {
+  if (!ts) return 'unknown';
+  const d = Date.now()-ts, m = Math.floor(d/60000);
+  if (m<1) return 'just now'; if (m<60) return m+'m ago';
+  const h = Math.floor(m/60);
+  if (h<24) return h+'h ago'; return Math.floor(h/24)+'d ago';
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT — run after DOM fully ready
+// ═══════════════════════════════════════════════════════════
+
+window.addEventListener('load', function() {
+  try {
+    attachAllListeners();
+    syncRoleDropdowns();
+    renderJobs();
+    updateStats();
+    renderTracker();
+    updateHistBadge();
+    buildCurrencyDropdowns();
+  } catch(err) {
+    console.error('[RJBP] Init error:', err);
+    // Show visible error bar so user knows something went wrong
+    const bar = document.createElement('div');
+    bar.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#7f1d1d;color:#fca5a5;padding:10px 16px;font-size:12px;z-index:9999;border-top:2px solid #991b1b';
+    bar.textContent = '⚠️ JS Error: ' + err.message + ' — Please hard-refresh: Ctrl+Shift+R (PC) or Cmd+Shift+R (Mac)';
+    document.body.appendChild(bar);
+  }
+});
+</script>
+</body>
+</html>
